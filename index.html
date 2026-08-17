@@ -613,21 +613,17 @@ body{
 </div>
 
 
-
 <script>
 
 /* =========================================
-   SUPABASE
+   SUPABASE CONFIGURATION
 ========================================= */
-
 
 const SUPABASE_URL =
     "https://fubjzvqiitulczwtfete.supabase.co";
 
-
 const SUPABASE_KEY =
-    "sb_publishable_gNXDdfiJ1eTFzD49btPN_w_Tl0Re6PJ";
-
+    "YOUR_SUPABASE_PUBLISHABLE_KEY";
 
 const supabaseClient =
     window.supabase.createClient(
@@ -643,59 +639,45 @@ const supabaseClient =
     );
 
 
-
 /* =========================================
    ELEMENTS
 ========================================= */
 
-
 const loginSection =
     document.getElementById("loginSection");
-
 
 const userBox =
     document.getElementById("userBox");
 
-
 const googleBtn =
     document.getElementById("googleBtn");
-
 
 const googleBtnText =
     document.getElementById("googleBtnText");
 
-
 const emailInput =
     document.getElementById("emailInput");
-
 
 const sendOtpBtn =
     document.getElementById("sendOtpBtn");
 
-
 const otpSection =
     document.getElementById("otpSection");
-
 
 const otpInput =
     document.getElementById("otpInput");
 
-
 const verifyOtpBtn =
     document.getElementById("verifyOtpBtn");
-
 
 const resendOtpBtn =
     document.getElementById("resendOtpBtn");
 
-
 const sentEmail =
     document.getElementById("sentEmail");
 
-
 const message =
     document.getElementById("message");
-
 
 const logoutBtn =
     document.getElementById("logoutBtn");
@@ -708,78 +690,51 @@ let resendSeconds = 0;
 let resendTimer = null;
 
 
-
 /* =========================================
    MESSAGE
 ========================================= */
 
-
-function showMessage(text,type)
-{
+function showMessage(text,type){
 
     message.textContent = text;
 
     message.className =
         "message " + type;
-
 }
 
 
-function clearMessage()
-{
+function clearMessage(){
 
     message.textContent = "";
 
     message.className =
         "message";
-
 }
-
 
 
 /* =========================================
    GOOGLE LOGIN
 ========================================= */
 
-
 googleBtn.addEventListener(
     "click",
-    async function()
-    {
+    async function(){
 
         clearMessage();
 
-
         googleBtn.disabled = true;
-
 
         googleBtnText.textContent =
             "Opening Google...";
 
-
-        try
-        {
-
-            /*
-            After Google login,
-            return to this same page.
-            */
+        try{
 
             const redirectUrl =
                 window.location.origin +
                 window.location.pathname;
 
 
-            console.log(
-                "Google Redirect URL:",
-                redirectUrl
-            );
-
-
-            const {
-                data,
-                error
-            } =
+            const { data,error } =
                 await supabaseClient.auth.signInWithOAuth({
 
                     provider:"google",
@@ -791,11 +746,7 @@ googleBtn.addEventListener(
                         skipBrowserRedirect:false,
 
                         queryParams:{
-
-                            prompt:"select_account",
-
-                            access_type:"offline"
-
+                            prompt:"select_account"
                         }
 
                     }
@@ -803,35 +754,23 @@ googleBtn.addEventListener(
                 });
 
 
-            if(error)
-            {
-
+            if(error){
                 throw error;
-
             }
 
 
-            /*
-            Supabase normally redirects automatically.
-            This fallback makes sure
-            Google opens.
-            */
+            if(data?.url){
 
-            if(data?.url)
-            {
-
-                window.location.assign(
-                    data.url
-                );
+                window.location.href =
+                    data.url;
 
             }
 
         }
-        catch(error)
-        {
+        catch(error){
 
             console.error(
-                "GOOGLE LOGIN ERROR:",
+                "Google Login Error:",
                 error
             );
 
@@ -845,7 +784,7 @@ googleBtn.addEventListener(
 
 
             showMessage(
-                error?.message ||
+                error.message ||
                 "Google login failed.",
                 "error"
             );
@@ -856,24 +795,23 @@ googleBtn.addEventListener(
 );
 
 
-
 /* =========================================
-   SEND OTP
+   SEND EMAIL OTP
 ========================================= */
 
+async function sendEmailOtp(email){
 
-async function sendOtp(email)
-{
-
-    const {
-        data,
-        error
-    } =
+    const { data,error } =
         await supabaseClient.auth.signInWithOtp({
 
             email:email,
 
             options:{
+
+                /*
+                TRUE means a new Supabase user
+                can automatically be created.
+                */
 
                 shouldCreateUser:true
 
@@ -882,24 +820,22 @@ async function sendOtp(email)
         });
 
 
-    if(error)
-    {
-
+    if(error){
         throw error;
-
     }
 
 
     return data;
-
 }
 
 
+/* =========================================
+   SEND OTP BUTTON
+========================================= */
 
 sendOtpBtn.addEventListener(
     "click",
-    async function()
-    {
+    async function(){
 
         clearMessage();
 
@@ -914,21 +850,18 @@ sendOtpBtn.addEventListener(
             /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 
-        if(!email)
-        {
+        if(!email){
 
             showMessage(
-                "Please enter your email address.",
+                "Please enter your Gmail address.",
                 "error"
             );
 
             return;
-
         }
 
 
-        if(!emailPattern.test(email))
-        {
+        if(!emailPattern.test(email)){
 
             showMessage(
                 "Please enter a valid email address.",
@@ -936,12 +869,10 @@ sendOtpBtn.addEventListener(
             );
 
             return;
-
         }
 
 
-        currentEmail =
-            email;
+        currentEmail = email;
 
 
         sendOtpBtn.disabled =
@@ -952,12 +883,9 @@ sendOtpBtn.addEventListener(
             "Sending OTP...";
 
 
-        try
-        {
+        try{
 
-            await sendOtp(
-                email
-            );
+            await sendEmailOtp(email);
 
 
             sentEmail.textContent =
@@ -973,19 +901,20 @@ sendOtpBtn.addEventListener(
 
 
             showMessage(
-                "OTP sent successfully. Check your email.",
+                "6-digit OTP sent. Check your Gmail inbox.",
                 "success"
             );
 
 
-            startResendTimer();
-
+            otpInput.value = "";
 
             otpInput.focus();
 
+
+            startResendTimer();
+
         }
-        catch(error)
-        {
+        catch(error){
 
             console.error(
                 "OTP SEND ERROR:",
@@ -994,14 +923,13 @@ sendOtpBtn.addEventListener(
 
 
             showMessage(
-                error?.message ||
+                error.message ||
                 "Unable to send OTP.",
                 "error"
             );
 
         }
-        finally
-        {
+        finally{
 
             sendOtpBtn.disabled =
                 false;
@@ -1016,16 +944,31 @@ sendOtpBtn.addEventListener(
 );
 
 
-
 /* =========================================
-   OTP NUMBERS ONLY
+   OTP INPUT - ONLY 6 NUMBERS
 ========================================= */
+
+otpInput.setAttribute(
+    "maxlength",
+    "6"
+);
+
+
+otpInput.setAttribute(
+    "inputmode",
+    "numeric"
+);
+
+
+otpInput.setAttribute(
+    "placeholder",
+    "000000"
+);
 
 
 otpInput.addEventListener(
     "input",
-    function()
-    {
+    function(){
 
         this.value =
             this.value
@@ -1036,48 +979,42 @@ otpInput.addEventListener(
 );
 
 
-
 /* =========================================
    VERIFY OTP
 ========================================= */
 
-
 verifyOtpBtn.addEventListener(
     "click",
-    async function()
-    {
+    async function(){
 
         clearMessage();
 
 
         const otp =
             otpInput.value
+                .replace(/\D/g,"")
                 .trim();
 
 
-        if(!currentEmail)
-        {
+        if(!currentEmail){
 
             showMessage(
-                "Please request an OTP first.",
+                "Please send an OTP first.",
                 "error"
             );
 
             return;
-
         }
 
 
-        if(otp.length !== 6)
-        {
+        if(otp.length !== 6){
 
             showMessage(
-                "Please enter the complete 6-digit OTP.",
+                "Enter the complete 6-digit OTP.",
                 "error"
             );
 
             return;
-
         }
 
 
@@ -1089,8 +1026,7 @@ verifyOtpBtn.addEventListener(
             "Verifying...";
 
 
-        try
-        {
+        try{
 
             const {
                 data,
@@ -1107,26 +1043,46 @@ verifyOtpBtn.addEventListener(
                 });
 
 
-            if(error)
-            {
-
+            if(error){
                 throw error;
-
             }
 
 
-            if(data?.user)
-            {
+            /*
+            IMPORTANT
 
-                showLoggedUser(
-                    data.user
+            A successful OTP verification
+            should return a session.
+            */
+
+            if(!data?.session){
+
+                throw new Error(
+                    "OTP verified but no login session was created."
                 );
 
             }
 
+
+            console.log(
+                "OTP LOGIN SUCCESS",
+                data
+            );
+
+
+            showMessage(
+                "Login successful.",
+                "success"
+            );
+
+
+            showLoggedUser(
+                data.user ||
+                data.session.user
+            );
+
         }
-        catch(error)
-        {
+        catch(error){
 
             console.error(
                 "OTP VERIFY ERROR:",
@@ -1134,15 +1090,30 @@ verifyOtpBtn.addEventListener(
             );
 
 
+            let errorMessage =
+                error.message ||
+                "OTP verification failed.";
+
+
+            if(
+                errorMessage
+                    .toLowerCase()
+                    .includes("expired")
+            ){
+
+                errorMessage =
+                    "This OTP has expired. Please request a new OTP.";
+
+            }
+
+
             showMessage(
-                error?.message ||
-                "Invalid OTP.",
+                errorMessage,
                 "error"
             );
 
         }
-        finally
-        {
+        finally{
 
             verifyOtpBtn.disabled =
                 false;
@@ -1157,25 +1128,37 @@ verifyOtpBtn.addEventListener(
 );
 
 
+/* =========================================
+   PRESS ENTER TO VERIFY
+========================================= */
+
+otpInput.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+
+            verifyOtpBtn.click();
+
+        }
+
+    }
+);
+
 
 /* =========================================
    RESEND OTP
 ========================================= */
 
-
 resendOtpBtn.addEventListener(
     "click",
-    async function()
-    {
+    async function(){
 
         if(
             !currentEmail ||
             resendSeconds > 0
-        )
-        {
-
+        ){
             return;
-
         }
 
 
@@ -1190,10 +1173,9 @@ resendOtpBtn.addEventListener(
             "Sending...";
 
 
-        try
-        {
+        try{
 
-            await sendOtp(
+            await sendEmailOtp(
                 currentEmail
             );
 
@@ -1202,19 +1184,21 @@ resendOtpBtn.addEventListener(
 
 
             showMessage(
-                "New OTP sent successfully.",
+                "A new 6-digit OTP was sent.",
                 "success"
             );
+
+
+            otpInput.focus();
 
 
             startResendTimer();
 
         }
-        catch(error)
-        {
+        catch(error){
 
             console.error(
-                "RESEND OTP ERROR:",
+                "RESEND ERROR:",
                 error
             );
 
@@ -1228,7 +1212,7 @@ resendOtpBtn.addEventListener(
 
 
             showMessage(
-                error?.message ||
+                error.message ||
                 "Unable to resend OTP.",
                 "error"
             );
@@ -1239,22 +1223,18 @@ resendOtpBtn.addEventListener(
 );
 
 
-
 /* =========================================
    RESEND TIMER
 ========================================= */
 
-
-function startResendTimer()
-{
+function startResendTimer(){
 
     clearInterval(
         resendTimer
     );
 
 
-    resendSeconds =
-        60;
+    resendSeconds = 60;
 
 
     resendOtpBtn.disabled =
@@ -1267,18 +1247,19 @@ function startResendTimer()
 
     resendTimer =
         setInterval(
-            function()
-            {
+            function(){
 
                 resendSeconds--;
 
 
-                if(resendSeconds <= 0)
-                {
+                if(resendSeconds <= 0){
 
                     clearInterval(
                         resendTimer
                     );
+
+
+                    resendSeconds = 0;
 
 
                     resendOtpBtn.disabled =
@@ -1306,14 +1287,16 @@ function startResendTimer()
 }
 
 
-
 /* =========================================
    SHOW LOGGED-IN USER
 ========================================= */
 
+function showLoggedUser(user){
 
-function showLoggedUser(user)
-{
+    if(!user){
+        return;
+    }
+
 
     loginSection.style.display =
         "none";
@@ -1330,6 +1313,7 @@ function showLoggedUser(user)
     const name =
         metadata.full_name ||
         metadata.name ||
+        user.email?.split("@")[0] ||
         "CEZOO User";
 
 
@@ -1356,8 +1340,7 @@ function showLoggedUser(user)
         );
 
 
-    if(avatar)
-    {
+    if(avatar){
 
         avatarElement.src =
             avatar;
@@ -1367,8 +1350,7 @@ function showLoggedUser(user)
             "inline-block";
 
     }
-    else
-    {
+    else{
 
         avatarElement.style.display =
             "none";
@@ -1378,17 +1360,13 @@ function showLoggedUser(user)
 }
 
 
-
 /* =========================================
-   CHECK SESSION AFTER GOOGLE RETURNS
+   CHECK EXISTING SESSION
 ========================================= */
 
+async function checkSession(){
 
-async function checkSession()
-{
-
-    try
-    {
+    try{
 
         const {
             data,
@@ -1397,21 +1375,12 @@ async function checkSession()
             await supabaseClient.auth.getSession();
 
 
-        if(error)
-        {
-
-            console.error(
-                "SESSION ERROR:",
-                error
-            );
-
-            return;
-
+        if(error){
+            throw error;
         }
 
 
-        if(data?.session?.user)
-        {
+        if(data?.session?.user){
 
             showLoggedUser(
                 data.session.user
@@ -1420,10 +1389,10 @@ async function checkSession()
         }
 
     }
-    catch(error)
-    {
+    catch(error){
 
         console.error(
+            "SESSION ERROR:",
             error
         );
 
@@ -1432,15 +1401,12 @@ async function checkSession()
 }
 
 
-
 /* =========================================
-   LISTEN FOR GOOGLE / OTP LOGIN
+   AUTH STATE LISTENER
 ========================================= */
 
-
 supabaseClient.auth.onAuthStateChange(
-    function(event,session)
-    {
+    function(event,session){
 
         console.log(
             "AUTH EVENT:",
@@ -1448,8 +1414,7 @@ supabaseClient.auth.onAuthStateChange(
         );
 
 
-        if(session?.user)
-        {
+        if(session?.user){
 
             showLoggedUser(
                 session.user
@@ -1461,47 +1426,44 @@ supabaseClient.auth.onAuthStateChange(
 );
 
 
-
 /* =========================================
    LOGOUT
 ========================================= */
 
-
 logoutBtn.addEventListener(
     "click",
-    async function()
-    {
+    async function(){
 
-        const {
-            error
-        } =
-            await supabaseClient.auth.signOut();
+        try{
+
+            const { error } =
+                await supabaseClient.auth.signOut();
 
 
-        if(error)
-        {
+            if(error){
+                throw error;
+            }
+
+
+            window.location.reload();
+
+        }
+        catch(error){
 
             console.error(
                 "LOGOUT ERROR:",
                 error
             );
 
-            return;
-
         }
-
-
-        window.location.reload();
 
     }
 );
 
 
-
 /* =========================================
-   START PAGE
+   START
 ========================================= */
-
 
 checkSession();
 
