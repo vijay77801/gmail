@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>CEZOO Login</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+
+    background:#f7f8fa;
+
+    font-family:
+        Inter,
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color:#111827;
+}
+
+
+.loginCard{
+
+    width:100%;
+    max-width:400px;
+
+    background:#ffffff;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:22px;
+
+    padding:30px 22px;
+
+    box-shadow:
+        0 8px 30px rgba(0,0,0,.06);
+}
+
+
+.logo{
+
+    text-align:center;
+
+    font-size:30px;
+    font-weight:900;
+
+    color:#166534;
+
+    letter-spacing:-1px;
+}
+
+
+.subtitle{
+
+    text-align:center;
+
+    margin-top:7px;
+    margin-bottom:26px;
+
+    color:#6b7280;
+
+    font-size:14px;
+
+    line-height:1.5;
+}
+
+
+.googleBtn{
+
+    width:100%;
+    height:52px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:13px;
+
+    background:#ffffff;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    gap:11px;
+
+    font-size:15px;
+    font-weight:600;
+
+    color:#1f2937;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+
+.googleBtn:hover{
+    background:#f9fafb;
+}
+
+
+.googleBtn:active{
+    transform:scale(.98);
+}
+
+
+.googleBtn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+
+.googleLogo{
+    width:20px;
+    height:20px;
+}
+
+
+.divider{
+
+    display:flex;
+    align-items:center;
+
+    gap:12px;
+
+    margin:23px 0;
+
+    color:#9ca3af;
+
+    font-size:12px;
+}
+
+
+.divider::before,
+.divider::after{
+
+    content:"";
+
+    flex:1;
+
+    height:1px;
+
+    background:#e5e7eb;
+}
+
+
+.label{
+
+    display:block;
+
+    font-size:13px;
+    font-weight:600;
+
+    margin-bottom:7px;
+}
+
+
+.input{
+
+    width:100%;
+
+    height:52px;
+
+    padding:0 15px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:13px;
+
+    outline:none;
+
+    font-size:15px;
+
+    transition:.2s;
+
+    background:#fff;
+}
+
+
+.input:focus{
+
+    border-color:#16a34a;
+
+    box-shadow:
+        0 0 0 3px rgba(22,163,74,.1);
+}
+
+
+.primaryBtn{
+
+    width:100%;
+
+    height:52px;
+
+    margin-top:15px;
+
+    border:0;
+
+    border-radius:13px;
+
+    background:#16a34a;
+
+    color:white;
+
+    font-size:15px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+
+.primaryBtn:hover{
+    background:#15803d;
+}
+
+
+.primaryBtn:active{
+    transform:scale(.98);
+}
+
+
+.primaryBtn:disabled{
+
+    opacity:.6;
+
+    cursor:not-allowed;
+}
+
+
+#otpSection{
+
+    display:none;
+
+    margin-top:18px;
+}
+
+
+.otpInfo{
+
+    font-size:13px;
+
+    color:#6b7280;
+
+    margin-bottom:12px;
+
+    line-height:1.5;
+}
+
+
+#otpInput{
+
+    text-align:center;
+
+    letter-spacing:6px;
+
+    font-size:21px;
+
+    font-weight:700;
+}
+
+
+.resendBtn{
+
+    width:100%;
+
+    margin-top:10px;
+
+    border:none;
+
+    background:transparent;
+
+    color:#15803d;
+
+    font-size:13px;
+    font-weight:600;
+
+    cursor:pointer;
+}
+
+
+.resendBtn:disabled{
+
+    color:#9ca3af;
+
+    cursor:not-allowed;
+}
+
+
+.message{
+
+    display:none;
+
+    margin-top:16px;
+
+    padding:11px 13px;
+
+    border-radius:10px;
+
+    font-size:13px;
+
+    line-height:1.45;
+}
+
+
+.message.success{
+
+    display:block;
+
+    background:#ecfdf5;
+
+    color:#166534;
+
+    border:1px solid #bbf7d0;
+}
+
+
+.message.error{
+
+    display:block;
+
+    background:#fef2f2;
+
+    color:#b91c1c;
+
+    border:1px solid #fecaca;
+}
+
+
+.userBox{
+
+    display:none;
+
+    text-align:center;
+}
+
+
+.avatar{
+
+    width:75px;
+    height:75px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    margin-bottom:12px;
+}
+
+
+.userName{
+
+    font-size:19px;
+
+    font-weight:700;
+}
+
+
+.userEmail{
+
+    margin-top:5px;
+
+    font-size:14px;
+
+    color:#6b7280;
+}
+
+
+.logoutBtn{
+
+    margin-top:20px;
+
+    width:100%;
+
+    height:48px;
+
+    border:1px solid #d1d5db;
+
+    background:white;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-weight:600;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="loginCard">
+
+
+<!-- =====================================
+     LOGIN SECTION
+===================================== -->
+
+<div id="loginSection">
+
+
+    <div class="logo">
+        CEZOO
+    </div>
+
+
+    <div class="subtitle">
+        Sign in with Google or email OTP
+    </div>
+
+
+
+    <!-- GOOGLE LOGIN -->
+
+    <button
+        class="googleBtn"
+        id="googleBtn"
+        type="button"
+    >
+
+        <svg
+            class="googleLogo"
+            viewBox="0 0 24 24"
+        >
+
+            <path
+                fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.75 3.27-8.1z"
+            />
+
+            <path
+                fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.15v2.84A11 11 0 0 0 12 23z"
+            />
+
+            <path
+                fill="#FBBC05"
+                d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.15a11 11 0 0 0 0 9.88l3.69-2.84z"
+            />
+
+            <path
+                fill="#EA4335"
+                d="M12 5.37c1.61 0 3.06.55 4.2 1.63l3.15-3.15C17.45 2.08 14.97 1 12 1A11 11 0 0 0 2.15 7.06L5.84 9.9C6.71 7.3 9.14 5.37 12 5.37z"
+            />
+
+        </svg>
+
+        <span id="googleBtnText">
+            Continue with Google
+        </span>
+
+    </button>
+
+
+
+    <div class="divider">
+        OR
+    </div>
+
+
+
+    <!-- EMAIL -->
+
+    <label
+        class="label"
+        for="emailInput"
+    >
+        Email address
+    </label>
+
+
+    <input
+        class="input"
+        id="emailInput"
+        type="email"
+        placeholder="example@gmail.com"
+        autocomplete="email"
+    >
+
+
+    <button
+        class="primaryBtn"
+        id="sendOtpBtn"
+        type="button"
+    >
+        Send OTP
+    </button>
+
+
+
+    <!-- OTP SECTION -->
+
+    <div id="otpSection">
+
+
+        <div class="otpInfo">
+
+            Enter the verification code sent to
+
+            <strong id="sentEmail"></strong>
+
+        </div>
+
+
+        <input
+            class="input"
+            id="otpInput"
+            type="text"
+            inputmode="numeric"
+            maxlength="8"
+            placeholder="00000000"
+            autocomplete="one-time-code"
+        >
+
+
+        <button
+            class="primaryBtn"
+            id="verifyOtpBtn"
+            type="button"
+        >
+            Verify OTP
+        </button>
+
+
+        <button
+            class="resendBtn"
+            id="resendOtpBtn"
+            type="button"
+        >
+            Resend OTP
+        </button>
+
+
+    </div>
+
+
+    <div
+        id="message"
+        class="message"
+    ></div>
+
+
+</div>
+
+
+
+<!-- =====================================
+     USER SECTION
+===================================== -->
+
+<div
+    id="userBox"
+    class="userBox"
+>
+
+
+    <img
+        id="userAvatar"
+        class="avatar"
+        alt="Profile"
+    >
+
+
+    <div
+        id="userName"
+        class="userName"
+    ></div>
+
+
+    <div
+        id="userEmail"
+        class="userEmail"
+    ></div>
+
+
+    <button
+        class="logoutBtn"
+        id="logoutBtn"
+        type="button"
+    >
+        Logout
+    </button>
+
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+
+const SUPABASE_URL =
+    "https://fubjzvqiitulczwtfete.supabase.co";
+
+
+const SUPABASE_KEY =
+    "sb_publishable_gNXDdfiJ1eTFzD49btPN_w_Tl0Re6PJ";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY,
+        {
+            auth:{
+                persistSession:true,
+                autoRefreshToken:true,
+                detectSessionInUrl:true
+            }
+        }
+    );
+
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+
+const loginSection =
+    document.getElementById("loginSection");
+
+
+const userBox =
+    document.getElementById("userBox");
+
+
+const googleBtn =
+    document.getElementById("googleBtn");
+
+
+const googleBtnText =
+    document.getElementById("googleBtnText");
+
+
+const emailInput =
+    document.getElementById("emailInput");
+
+
+const sendOtpBtn =
+    document.getElementById("sendOtpBtn");
+
+
+const otpSection =
+    document.getElementById("otpSection");
+
+
+const otpInput =
+    document.getElementById("otpInput");
+
+
+const verifyOtpBtn =
+    document.getElementById("verifyOtpBtn");
+
+
+const resendOtpBtn =
+    document.getElementById("resendOtpBtn");
+
+
+const sentEmail =
+    document.getElementById("sentEmail");
+
+
+const message =
+    document.getElementById("message");
+
+
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
+
+let currentEmail = "";
+
+let resendSeconds = 0;
+
+let resendTimer = null;
+
+
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+
+function showMessage(text,type)
+{
+
+    message.textContent = text;
+
+    message.className =
+        "message " + type;
+
+}
+
+
+function clearMessage()
+{
+
+    message.textContent = "";
+
+    message.className =
+        "message";
+
+}
+
+
+
+/* =========================================
+   GOOGLE LOGIN
+========================================= */
+
+
+googleBtn.addEventListener(
+    "click",
+    async function()
+    {
+
+        clearMessage();
+
+
+        googleBtn.disabled = true;
+
+
+        googleBtnText.textContent =
+            "Opening Google...";
+
+
+        try
+        {
+
+            /*
+            After Google login,
+            return to this same page.
+            */
+
+            const redirectUrl =
+                window.location.origin +
+                window.location.pathname;
+
+
+            console.log(
+                "Google Redirect URL:",
+                redirectUrl
+            );
+
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient.auth.signInWithOAuth({
+
+                    provider:"google",
+
+                    options:{
+
+                        redirectTo:redirectUrl,
+
+                        skipBrowserRedirect:false,
+
+                        queryParams:{
+
+                            prompt:"select_account",
+
+                            access_type:"offline"
+
+                        }
+
+                    }
+
+                });
+
+
+            if(error)
+            {
+
+                throw error;
+
+            }
+
+
+            /*
+            Supabase normally redirects automatically.
+            This fallback makes sure
+            Google opens.
+            */
+
+            if(data?.url)
+            {
+
+                window.location.assign(
+                    data.url
+                );
+
+            }
+
+        }
+        catch(error)
+        {
+
+            console.error(
+                "GOOGLE LOGIN ERROR:",
+                error
+            );
+
+
+            googleBtn.disabled =
+                false;
+
+
+            googleBtnText.textContent =
+                "Continue with Google";
+
+
+            showMessage(
+                error?.message ||
+                "Google login failed.",
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+
+/* =========================================
+   SEND OTP
+========================================= */
+
+
+async function sendOtp(email)
+{
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.signInWithOtp({
+
+            email:email,
+
+            options:{
+
+                shouldCreateUser:true
+
+            }
+
+        });
+
+
+    if(error)
+    {
+
+        throw error;
+
+    }
+
+
+    return data;
+
+}
+
+
+
+sendOtpBtn.addEventListener(
+    "click",
+    async function()
+    {
+
+        clearMessage();
+
+
+        const email =
+            emailInput.value
+                .trim()
+                .toLowerCase();
+
+
+        const emailPattern =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+        if(!email)
+        {
+
+            showMessage(
+                "Please enter your email address.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(!emailPattern.test(email))
+        {
+
+            showMessage(
+                "Please enter a valid email address.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        currentEmail =
+            email;
+
+
+        sendOtpBtn.disabled =
+            true;
+
+
+        sendOtpBtn.textContent =
+            "Sending OTP...";
+
+
+        try
+        {
+
+            await sendOtp(
+                email
+            );
+
+
+            sentEmail.textContent =
+                email;
+
+
+            otpSection.style.display =
+                "block";
+
+
+            emailInput.disabled =
+                true;
+
+
+            showMessage(
+                "OTP sent successfully. Check your email.",
+                "success"
+            );
+
+
+            startResendTimer();
+
+
+            otpInput.focus();
+
+        }
+        catch(error)
+        {
+
+            console.error(
+                "OTP SEND ERROR:",
+                error
+            );
+
+
+            showMessage(
+                error?.message ||
+                "Unable to send OTP.",
+                "error"
+            );
+
+        }
+        finally
+        {
+
+            sendOtpBtn.disabled =
+                false;
+
+
+            sendOtpBtn.textContent =
+                "Send OTP";
+
+        }
+
+    }
+);
+
+
+
+/* =========================================
+   OTP NUMBERS ONLY
+========================================= */
+
+
+otpInput.addEventListener(
+    "input",
+    function()
+    {
+
+        this.value =
+            this.value
+                .replace(/\D/g,"")
+                .slice(0,8);
+
+    }
+);
+
+
+
+/* =========================================
+   VERIFY OTP
+========================================= */
+
+
+verifyOtpBtn.addEventListener(
+    "click",
+    async function()
+    {
+
+        clearMessage();
+
+
+        const otp =
+            otpInput.value
+                .trim();
+
+
+        if(!currentEmail)
+        {
+
+            showMessage(
+                "Please request an OTP first.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(otp.length !== 8)
+        {
+
+            showMessage(
+                "Please enter the complete 8-digit OTP.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        verifyOtpBtn.disabled =
+            true;
+
+
+        verifyOtpBtn.textContent =
+            "Verifying...";
+
+
+        try
+        {
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient.auth.verifyOtp({
+
+                    email:currentEmail,
+
+                    token:otp,
+
+                    type:"email"
+
+                });
+
+
+            if(error)
+            {
+
+                throw error;
+
+            }
+
+
+            if(data?.user)
+            {
+
+                showLoggedUser(
+                    data.user
+                );
+
+            }
+
+        }
+        catch(error)
+        {
+
+            console.error(
+                "OTP VERIFY ERROR:",
+                error
+            );
+
+
+            showMessage(
+                error?.message ||
+                "Invalid OTP.",
+                "error"
+            );
+
+        }
+        finally
+        {
+
+            verifyOtpBtn.disabled =
+                false;
+
+
+            verifyOtpBtn.textContent =
+                "Verify OTP";
+
+        }
+
+    }
+);
+
+
+
+/* =========================================
+   RESEND OTP
+========================================= */
+
+
+resendOtpBtn.addEventListener(
+    "click",
+    async function()
+    {
+
+        if(
+            !currentEmail ||
+            resendSeconds > 0
+        )
+        {
+
+            return;
+
+        }
+
+
+        clearMessage();
+
+
+        resendOtpBtn.disabled =
+            true;
+
+
+        resendOtpBtn.textContent =
+            "Sending...";
+
+
+        try
+        {
+
+            await sendOtp(
+                currentEmail
+            );
+
+
+            otpInput.value = "";
+
+
+            showMessage(
+                "New OTP sent successfully.",
+                "success"
+            );
+
+
+            startResendTimer();
+
+        }
+        catch(error)
+        {
+
+            console.error(
+                "RESEND OTP ERROR:",
+                error
+            );
+
+
+            resendOtpBtn.disabled =
+                false;
+
+
+            resendOtpBtn.textContent =
+                "Resend OTP";
+
+
+            showMessage(
+                error?.message ||
+                "Unable to resend OTP.",
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+
+/* =========================================
+   RESEND TIMER
+========================================= */
+
+
+function startResendTimer()
+{
+
+    clearInterval(
+        resendTimer
+    );
+
+
+    resendSeconds =
+        60;
+
+
+    resendOtpBtn.disabled =
+        true;
+
+
+    resendOtpBtn.textContent =
+        "Resend OTP in 60s";
+
+
+    resendTimer =
+        setInterval(
+            function()
+            {
+
+                resendSeconds--;
+
+
+                if(resendSeconds <= 0)
+                {
+
+                    clearInterval(
+                        resendTimer
+                    );
+
+
+                    resendOtpBtn.disabled =
+                        false;
+
+
+                    resendOtpBtn.textContent =
+                        "Resend OTP";
+
+
+                    return;
+
+                }
+
+
+                resendOtpBtn.textContent =
+                    "Resend OTP in " +
+                    resendSeconds +
+                    "s";
+
+            },
+            1000
+        );
+
+}
+
+
+
+/* =========================================
+   SHOW LOGGED-IN USER
+========================================= */
+
+
+function showLoggedUser(user)
+{
+
+    loginSection.style.display =
+        "none";
+
+
+    userBox.style.display =
+        "block";
+
+
+    const metadata =
+        user.user_metadata || {};
+
+
+    const name =
+        metadata.full_name ||
+        metadata.name ||
+        "CEZOO User";
+
+
+    document.getElementById(
+        "userName"
+    ).textContent =
+        name;
+
+
+    document.getElementById(
+        "userEmail"
+    ).textContent =
+        user.email || "";
+
+
+    const avatar =
+        metadata.avatar_url ||
+        metadata.picture;
+
+
+    const avatarElement =
+        document.getElementById(
+            "userAvatar"
+        );
+
+
+    if(avatar)
+    {
+
+        avatarElement.src =
+            avatar;
+
+
+        avatarElement.style.display =
+            "inline-block";
+
+    }
+    else
+    {
+
+        avatarElement.style.display =
+            "none";
+
+    }
+
+}
+
+
+
+/* =========================================
+   CHECK SESSION AFTER GOOGLE RETURNS
+========================================= */
+
+
+async function checkSession()
+{
+
+    try
+    {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.getSession();
+
+
+        if(error)
+        {
+
+            console.error(
+                "SESSION ERROR:",
+                error
+            );
+
+            return;
+
+        }
+
+
+        if(data?.session?.user)
+        {
+
+            showLoggedUser(
+                data.session.user
+            );
+
+        }
+
+    }
+    catch(error)
+    {
+
+        console.error(
+            error
+        );
+
+    }
+
+}
+
+
+
+/* =========================================
+   LISTEN FOR GOOGLE / OTP LOGIN
+========================================= */
+
+
+supabaseClient.auth.onAuthStateChange(
+    function(event,session)
+    {
+
+        console.log(
+            "AUTH EVENT:",
+            event
+        );
+
+
+        if(session?.user)
+        {
+
+            showLoggedUser(
+                session.user
+            );
+
+        }
+
+    }
+);
+
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+
+logoutBtn.addEventListener(
+    "click",
+    async function()
+    {
+
+        const {
+            error
+        } =
+            await supabaseClient.auth.signOut();
+
+
+        if(error)
+        {
+
+            console.error(
+                "LOGOUT ERROR:",
+                error
+            );
+
+            return;
+
+        }
+
+
+        window.location.reload();
+
+    }
+);
+
+
+
+/* =========================================
+   START PAGE
+========================================= */
+
+
+checkSession();
+
+</script>
+
+
+</body>
+</html>
