@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
-<title>CEZOO Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examinations Login</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
 *{
     margin:0;
     padding:0;
@@ -25,599 +19,410 @@ body{
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:20px;
-
-    background:#f7f8fa;
-
-    font-family:
-        Inter,
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    color:#111827;
+    padding:24px;
+    background:#ffffff;
+    font-family:Inter,Arial,Helvetica,sans-serif;
+    color:#202124;
 }
 
-
-.loginCard{
-
+.authWrap{
     width:100%;
     max-width:400px;
-
-    background:#ffffff;
-
-    border:1px solid #e5e7eb;
-
-    border-radius:22px;
-
-    padding:30px 22px;
-
-    box-shadow:
-        0 8px 30px rgba(0,0,0,.06);
 }
 
-
-.logo{
-
+.topBack{
+    display:none;
+    width:38px;
+    height:38px;
+    border:0;
+    background:transparent;
+    border-radius:50%;
+    cursor:pointer;
+    margin-bottom:24px;
+    font-size:25px;
+    line-height:38px;
     text-align:center;
-
-    font-size:30px;
-    font-weight:900;
-
-    color:#166534;
-
-    letter-spacing:-1px;
+    color:#3c4043;
 }
 
+.topBack:hover{
+    background:#f1f3f4;
+}
+
+.title{
+    font-size:28px;
+    font-weight:600;
+    letter-spacing:-.4px;
+    color:#202124;
+    margin-bottom:10px;
+}
 
 .subtitle{
-
-    text-align:center;
-
-    margin-top:7px;
-    margin-bottom:26px;
-
-    color:#6b7280;
-
     font-size:14px;
-
-    line-height:1.5;
+    line-height:1.55;
+    color:#5f6368;
+    margin-bottom:32px;
 }
 
+.fieldLabel{
+    display:block;
+    font-size:13px;
+    font-weight:500;
+    color:#3c4043;
+    margin-bottom:9px;
+}
 
-.googleBtn{
-
+.textInput{
     width:100%;
-    height:52px;
+    height:50px;
+    padding:0 2px;
+    border:0;
+    border-bottom:1.5px solid #dadce0;
+    border-radius:0;
+    outline:none;
+    background:transparent;
+    font-size:16px;
+    color:#202124;
+    transition:.2s ease;
+}
 
-    border:1px solid #d1d5db;
+.textInput:focus{
+    border-bottom-color:#1a73e8;
+}
 
-    border-radius:13px;
-
-    background:#ffffff;
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    gap:11px;
-
+.primaryBtn{
+    width:100%;
+    height:50px;
+    margin-top:24px;
+    border:0;
+    border-radius:25px;
+    background:#1a73e8;
+    color:#fff;
     font-size:15px;
     font-weight:600;
-
-    color:#1f2937;
-
     cursor:pointer;
-
-    transition:.2s;
+    transition:.2s ease;
 }
 
-
-.googleBtn:hover{
-    background:#f9fafb;
+.primaryBtn:hover{
+    background:#1765cc;
 }
 
-
-.googleBtn:active{
-    transform:scale(.98);
-}
-
-
+.primaryBtn:disabled,
 .googleBtn:disabled{
     opacity:.6;
     cursor:not-allowed;
 }
 
+.divider{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin:28px 0;
+    color:#9aa0a6;
+    font-size:11px;
+    font-weight:600;
+}
 
-.googleLogo{
+.divider::before,
+.divider::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:#eeeeee;
+}
+
+.googleBtn{
+    width:100%;
+    height:52px;
+    border:1px solid #dadce0;
+    border-radius:26px;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    color:#3c4043;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.2s ease;
+}
+
+.googleBtn:hover{
+    background:#f8f9fa;
+}
+
+.googleBtn svg{
     width:20px;
     height:20px;
 }
 
-
-.divider{
-
-    display:flex;
-    align-items:center;
-
-    gap:12px;
-
-    margin:23px 0;
-
-    color:#9ca3af;
-
-    font-size:12px;
-}
-
-
-.divider::before,
-.divider::after{
-
-    content:"";
-
-    flex:1;
-
-    height:1px;
-
-    background:#e5e7eb;
-}
-
-
-.label{
-
-    display:block;
-
-    font-size:13px;
-    font-weight:600;
-
-    margin-bottom:7px;
-}
-
-
-.input{
-
-    width:100%;
-
-    height:52px;
-
-    padding:0 15px;
-
-    border:1px solid #d1d5db;
-
-    border-radius:13px;
-
-    outline:none;
-
-    font-size:15px;
-
-    transition:.2s;
-
-    background:#fff;
-}
-
-
-.input:focus{
-
-    border-color:#16a34a;
-
-    box-shadow:
-        0 0 0 3px rgba(22,163,74,.1);
-}
-
-
-.primaryBtn{
-
-    width:100%;
-
-    height:52px;
-
-    margin-top:15px;
-
-    border:0;
-
-    border-radius:13px;
-
-    background:#16a34a;
-
-    color:white;
-
-    font-size:15px;
-    font-weight:700;
-
-    cursor:pointer;
-
-    transition:.2s;
-}
-
-
-.primaryBtn:hover{
-    background:#15803d;
-}
-
-
-.primaryBtn:active{
-    transform:scale(.98);
-}
-
-
-.primaryBtn:disabled{
-
-    opacity:.6;
-
-    cursor:not-allowed;
-}
-
-
-#otpSection{
-
+#otpStep{
     display:none;
-
-    margin-top:18px;
 }
 
+.codeInput{
+    width:100%;
+    height:56px;
+    padding:0 2px;
+    border:0;
+    border-bottom:2px solid #dadce0;
+    border-radius:0;
+    background:transparent;
+    outline:none;
+    font-size:27px;
+    font-weight:600;
+    letter-spacing:10px;
+    color:#202124;
+    transition:.2s ease;
+}
 
-.otpInfo{
+.codeInput:focus{
+    border-bottom-color:#1a73e8;
+}
 
+.helperText{
+    margin-top:12px;
+    color:#5f6368;
     font-size:13px;
-
-    color:#6b7280;
-
-    margin-bottom:12px;
-
     line-height:1.5;
 }
 
-
-#otpInput{
-
-    text-align:center;
-
-    letter-spacing:6px;
-
-    font-size:21px;
-
-    font-weight:700;
-}
-
-
 .resendBtn{
-
-    width:100%;
-
-    margin-top:10px;
-
-    border:none;
-
+    display:block;
+    margin:20px auto 0;
+    border:0;
     background:transparent;
-
-    color:#15803d;
-
-    font-size:13px;
+    color:#1a73e8;
+    font-size:14px;
     font-weight:600;
-
     cursor:pointer;
 }
 
-
 .resendBtn:disabled{
-
-    color:#9ca3af;
-
+    color:#9aa0a6;
     cursor:not-allowed;
 }
 
-
 .message{
-
     display:none;
-
-    margin-top:16px;
-
-    padding:11px 13px;
-
-    border-radius:10px;
-
+    margin-top:18px;
     font-size:13px;
-
-    line-height:1.45;
+    line-height:1.5;
 }
-
 
 .message.success{
-
     display:block;
-
-    background:#ecfdf5;
-
-    color:#166534;
-
-    border:1px solid #bbf7d0;
+    color:#188038;
 }
-
 
 .message.error{
-
     display:block;
-
-    background:#fef2f2;
-
-    color:#b91c1c;
-
-    border:1px solid #fecaca;
+    color:#d93025;
 }
 
-
 .userBox{
-
     display:none;
-
     text-align:center;
 }
 
-
 .avatar{
-
-    width:75px;
-    height:75px;
-
+    width:74px;
+    height:74px;
     border-radius:50%;
-
     object-fit:cover;
-
-    margin-bottom:12px;
+    margin-bottom:14px;
 }
-
 
 .userName{
-
-    font-size:19px;
-
-    font-weight:700;
-}
-
-
-.userEmail{
-
-    margin-top:5px;
-
-    font-size:14px;
-
-    color:#6b7280;
-}
-
-
-.logoutBtn{
-
-    margin-top:20px;
-
-    width:100%;
-
-    height:48px;
-
-    border:1px solid #d1d5db;
-
-    background:white;
-
-    border-radius:12px;
-
-    cursor:pointer;
-
+    font-size:20px;
     font-weight:600;
 }
 
+.userEmail{
+    margin-top:6px;
+    color:#5f6368;
+    font-size:14px;
+}
+
+.logoutBtn{
+    width:100%;
+    height:50px;
+    margin-top:24px;
+    border:1px solid #dadce0;
+    border-radius:25px;
+    background:#fff;
+    color:#3c4043;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+@media(max-width:480px){
+    body{
+        align-items:flex-start;
+        padding:64px 24px 32px;
+    }
+
+    .title{
+        font-size:26px;
+    }
+}
 </style>
-
 </head>
-
 
 <body>
 
+<div class="authWrap">
 
-<div class="loginCard">
+    <button id="backBtn" class="topBack" type="button" aria-label="Back">←</button>
 
+    <div id="loginSection">
 
-<!-- =====================================
-     LOGIN SECTION
-===================================== -->
+        <!-- STEP 1 -->
+        <div id="emailStep">
 
-<div id="loginSection">
+            <div class="title">Sign in</div>
 
+            <div class="subtitle">
+                Enter your email to continue to Examinations.
+            </div>
 
-    <div class="logo">
-        CEZOO
-    </div>
+            <label class="fieldLabel" for="emailInput">
+                Email address
+            </label>
 
+            <input
+                id="emailInput"
+                class="textInput"
+                type="email"
+                placeholder="example@gmail.com"
+                autocomplete="email"
+            >
 
-    <div class="subtitle">
-        Sign in with Google or email OTP
-    </div>
+            <button
+                id="sendOtpBtn"
+                class="primaryBtn"
+                type="button"
+            >
+                Continue
+            </button>
 
+            <div class="divider">OR</div>
 
+            <button
+                id="googleBtn"
+                class="googleBtn"
+                type="button"
+            >
+                <svg viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.75 3.27-8.1z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.15v2.84A11 11 0 0 0 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.15a11 11 0 0 0 0 9.88l3.69-2.84z"/>
+                    <path fill="#EA4335" d="M12 5.37c1.61 0 3.06.55 4.2 1.63l3.15-3.15C17.45 2.08 14.97 1 12 1A11 11 0 0 0 2.15 7.06L5.84 9.9C6.71 7.3 9.14 5.37 12 5.37z"/>
+                </svg>
 
-    <!-- GOOGLE LOGIN -->
-
-    <button
-        class="googleBtn"
-        id="googleBtn"
-        type="button"
-    >
-
-        <svg
-            class="googleLogo"
-            viewBox="0 0 24 24"
-        >
-
-            <path
-                fill="#4285F4"
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.75 3.27-8.1z"
-            />
-
-            <path
-                fill="#34A853"
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.15v2.84A11 11 0 0 0 12 23z"
-            />
-
-            <path
-                fill="#FBBC05"
-                d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.15a11 11 0 0 0 0 9.88l3.69-2.84z"
-            />
-
-            <path
-                fill="#EA4335"
-                d="M12 5.37c1.61 0 3.06.55 4.2 1.63l3.15-3.15C17.45 2.08 14.97 1 12 1A11 11 0 0 0 2.15 7.06L5.84 9.9C6.71 7.3 9.14 5.37 12 5.37z"
-            />
-
-        </svg>
-
-        <span id="googleBtnText">
-            Continue with Google
-        </span>
-
-    </button>
-
-
-
-    <div class="divider">
-        OR
-    </div>
-
-
-
-    <!-- EMAIL -->
-
-    <label
-        class="label"
-        for="emailInput"
-    >
-        Email address
-    </label>
-
-
-    <input
-        class="input"
-        id="emailInput"
-        type="email"
-        placeholder="example@gmail.com"
-        autocomplete="email"
-    >
-
-
-    <button
-        class="primaryBtn"
-        id="sendOtpBtn"
-        type="button"
-    >
-        Send OTP
-    </button>
-
-
-
-    <!-- OTP SECTION -->
-
-    <div id="otpSection">
-
-
-        <div class="otpInfo">
-
-            Enter the verification code sent to
-
-            <strong id="sentEmail"></strong>
+                <span id="googleBtnText">
+                    Continue with Google
+                </span>
+            </button>
 
         </div>
 
 
-        <input
-            class="input"
-            id="otpInput"
-            type="text"
-            inputmode="numeric"
-            maxlength="6"
-            placeholder="000000"
-            autocomplete="one-time-code"
-        >
+        <!-- STEP 2 -->
+        <div id="otpStep">
+
+            <div class="title">
+                Enter verification code
+            </div>
+
+            <div class="subtitle">
+                Check your email and enter the 6-digit code to continue.
+            </div>
+
+            <label class="fieldLabel" for="otpInput">
+                Verification code
+            </label>
+
+            <input
+                id="otpInput"
+                class="codeInput"
+                type="text"
+                inputmode="numeric"
+                maxlength="6"
+                placeholder="000000"
+                autocomplete="one-time-code"
+            >
+
+            <div class="helperText">
+                Didn't receive the code? You can request a new one below.
+            </div>
+
+            <button
+                id="verifyOtpBtn"
+                class="primaryBtn"
+                type="button"
+            >
+                Continue
+            </button>
+
+            <button
+                id="resendOtpBtn"
+                class="resendBtn"
+                type="button"
+            >
+                Resend code
+            </button>
+
+        </div>
 
 
-        <button
-            class="primaryBtn"
-            id="verifyOtpBtn"
-            type="button"
-        >
-            Verify OTP
-        </button>
-
-
-        <button
-            class="resendBtn"
-            id="resendOtpBtn"
-            type="button"
-        >
-            Resend OTP
-        </button>
-
+        <div
+            id="message"
+            class="message"
+        ></div>
 
     </div>
 
 
+    <!-- LOGGED USER -->
     <div
-        id="message"
-        class="message"
-    ></div>
-
-
-</div>
-
-
-
-<!-- =====================================
-     USER SECTION
-===================================== -->
-
-<div
-    id="userBox"
-    class="userBox"
->
-
-
-    <img
-        id="userAvatar"
-        class="avatar"
-        alt="Profile"
+        id="userBox"
+        class="userBox"
     >
 
+        <img
+            id="userAvatar"
+            class="avatar"
+            alt="Profile"
+        >
 
-    <div
-        id="userName"
-        class="userName"
-    ></div>
+        <div
+            id="userName"
+            class="userName"
+        ></div>
 
+        <div
+            id="userEmail"
+            class="userEmail"
+        ></div>
 
-    <div
-        id="userEmail"
-        class="userEmail"
-    ></div>
+        <button
+            id="logoutBtn"
+            class="logoutBtn"
+            type="button"
+        >
+            Sign out
+        </button>
 
-
-    <button
-        class="logoutBtn"
-        id="logoutBtn"
-        type="button"
-    >
-        Logout
-    </button>
-
-
-</div>
-
+    </div>
 
 </div>
 
 
 <script>
-
-/* =========================================
-   SUPABASE CONFIGURATION
-========================================= */
 
 const SUPABASE_URL =
     "https://fubjzvqiitulczwtfete.supabase.co/";
@@ -639,30 +444,23 @@ const supabaseClient =
     );
 
 
-/* =========================================
-   ELEMENTS
-========================================= */
-
 const loginSection =
     document.getElementById("loginSection");
 
-const userBox =
-    document.getElementById("userBox");
+const emailStep =
+    document.getElementById("emailStep");
 
-const googleBtn =
-    document.getElementById("googleBtn");
+const otpStep =
+    document.getElementById("otpStep");
 
-const googleBtnText =
-    document.getElementById("googleBtnText");
+const backBtn =
+    document.getElementById("backBtn");
 
 const emailInput =
     document.getElementById("emailInput");
 
 const sendOtpBtn =
     document.getElementById("sendOtpBtn");
-
-const otpSection =
-    document.getElementById("otpSection");
 
 const otpInput =
     document.getElementById("otpInput");
@@ -673,11 +471,17 @@ const verifyOtpBtn =
 const resendOtpBtn =
     document.getElementById("resendOtpBtn");
 
-const sentEmail =
-    document.getElementById("sentEmail");
+const googleBtn =
+    document.getElementById("googleBtn");
+
+const googleBtnText =
+    document.getElementById("googleBtnText");
 
 const message =
     document.getElementById("message");
+
+const userBox =
+    document.getElementById("userBox");
 
 const logoutBtn =
     document.getElementById("logoutBtn");
@@ -690,16 +494,13 @@ let resendSeconds = 0;
 let resendTimer = null;
 
 
-/* =========================================
-   MESSAGE
-========================================= */
-
 function showMessage(text,type){
 
     message.textContent = text;
 
     message.className =
         "message " + type;
+
 }
 
 
@@ -709,109 +510,95 @@ function clearMessage(){
 
     message.className =
         "message";
+
 }
 
 
-/* =========================================
-   GOOGLE LOGIN
-========================================= */
+/* ============================
+   STEP SWITCHING
+============================ */
 
-googleBtn.addEventListener(
+function showEmailStep(){
+
+    clearMessage();
+
+    otpStep.style.display =
+        "none";
+
+    emailStep.style.display =
+        "block";
+
+    backBtn.style.display =
+        "none";
+
+    otpInput.value =
+        "";
+
+    currentEmail =
+        "";
+
+    clearInterval(
+        resendTimer
+    );
+
+    resendSeconds =
+        0;
+
+    resendOtpBtn.disabled =
+        false;
+
+    resendOtpBtn.textContent =
+        "Resend code";
+
+    emailInput.disabled =
+        false;
+
+    emailInput.focus();
+
+}
+
+
+function showOtpStep(){
+
+    clearMessage();
+
+    emailStep.style.display =
+        "none";
+
+    otpStep.style.display =
+        "block";
+
+    backBtn.style.display =
+        "block";
+
+    otpInput.value =
+        "";
+
+    otpInput.focus();
+
+}
+
+
+backBtn.addEventListener(
     "click",
-    async function(){
-
-        clearMessage();
-
-        googleBtn.disabled = true;
-
-        googleBtnText.textContent =
-            "Opening Google...";
-
-        try{
-
-            const redirectUrl =
-                window.location.origin +
-                window.location.pathname;
-
-
-            const { data,error } =
-                await supabaseClient.auth.signInWithOAuth({
-
-                    provider:"google",
-
-                    options:{
-
-                        redirectTo:redirectUrl,
-
-                        skipBrowserRedirect:false,
-
-                        queryParams:{
-                            prompt:"select_account"
-                        }
-
-                    }
-
-                });
-
-
-            if(error){
-                throw error;
-            }
-
-
-            if(data?.url){
-
-                window.location.href =
-                    data.url;
-
-            }
-
-        }
-        catch(error){
-
-            console.error(
-                "Google Login Error:",
-                error
-            );
-
-
-            googleBtn.disabled =
-                false;
-
-
-            googleBtnText.textContent =
-                "Continue with Google";
-
-
-            showMessage(
-                error.message ||
-                "Google login failed.",
-                "error"
-            );
-
-        }
-
-    }
+    showEmailStep
 );
 
 
-/* =========================================
-   SEND EMAIL OTP
-========================================= */
+/* ============================
+   SEND OTP
+============================ */
 
-async function sendEmailOtp(email){
+async function sendOtp(email){
 
-    const { data,error } =
+    const {
+        error
+    } =
         await supabaseClient.auth.signInWithOtp({
 
             email:email,
 
             options:{
-
-                /*
-                TRUE means a new Supabase user
-                can automatically be created.
-                */
 
                 shouldCreateUser:true
 
@@ -821,21 +608,18 @@ async function sendEmailOtp(email){
 
 
     if(error){
+
         throw error;
+
     }
 
-
-    return data;
 }
 
 
-/* =========================================
-   SEND OTP BUTTON
-========================================= */
-
 sendOtpBtn.addEventListener(
     "click",
-    async function(){
+    async () =>
+    {
 
         clearMessage();
 
@@ -846,33 +630,24 @@ sendOtpBtn.addEventListener(
                 .toLowerCase();
 
 
-        const emailPattern =
+        const validEmail =
             /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 
-        if(!email){
+        if(!validEmail.test(email)){
 
             showMessage(
-                "Please enter your Gmail address.",
+                "Enter a valid email address.",
                 "error"
             );
 
             return;
+
         }
 
 
-        if(!emailPattern.test(email)){
-
-            showMessage(
-                "Please enter a valid email address.",
-                "error"
-            );
-
-            return;
-        }
-
-
-        currentEmail = email;
+        currentEmail =
+            email;
 
 
         sendOtpBtn.disabled =
@@ -880,35 +655,17 @@ sendOtpBtn.addEventListener(
 
 
         sendOtpBtn.textContent =
-            "Sending OTP...";
+            "Sending...";
 
 
         try{
 
-            await sendEmailOtp(email);
-
-
-            sentEmail.textContent =
-                email;
-
-
-            otpSection.style.display =
-                "block";
-
-
-            emailInput.disabled =
-                true;
-
-
-            showMessage(
-                "6-digit OTP sent. Check your Gmail inbox.",
-                "success"
+            await sendOtp(
+                email
             );
 
 
-            otpInput.value = "";
-
-            otpInput.focus();
+            showOtpStep();
 
 
             startResendTimer();
@@ -923,8 +680,8 @@ sendOtpBtn.addEventListener(
 
 
             showMessage(
-                error.message ||
-                "Unable to send OTP.",
+                error?.message ||
+                "Unable to send verification code.",
                 "error"
             );
 
@@ -936,7 +693,7 @@ sendOtpBtn.addEventListener(
 
 
             sendOtpBtn.textContent =
-                "Send OTP";
+                "Continue";
 
         }
 
@@ -944,31 +701,14 @@ sendOtpBtn.addEventListener(
 );
 
 
-/* =========================================
-   OTP INPUT - ONLY 6 NUMBERS
-========================================= */
-
-otpInput.setAttribute(
-    "maxlength",
-    "6"
-);
-
-
-otpInput.setAttribute(
-    "inputmode",
-    "numeric"
-);
-
-
-otpInput.setAttribute(
-    "placeholder",
-    "000000"
-);
-
+/* ============================
+   OTP INPUT
+============================ */
 
 otpInput.addEventListener(
     "input",
-    function(){
+    function()
+    {
 
         this.value =
             this.value
@@ -979,42 +719,32 @@ otpInput.addEventListener(
 );
 
 
-/* =========================================
+/* ============================
    VERIFY OTP
-========================================= */
+============================ */
 
 verifyOtpBtn.addEventListener(
     "click",
-    async function(){
+    async () =>
+    {
 
         clearMessage();
 
 
-        const otp =
+        const token =
             otpInput.value
-                .replace(/\D/g,"")
-                .trim();
+                .replace(/\D/g,"");
 
 
-        if(!currentEmail){
+        if(token.length !== 6){
 
             showMessage(
-                "Please send an OTP first.",
+                "Enter the complete 6-digit verification code.",
                 "error"
             );
 
             return;
-        }
 
-
-        if(otp.length !== 6){
-
-            showMessage(
-                "Enter the complete 6-digit OTP.",
-                "error"
-            );
-
-            return;
         }
 
 
@@ -1036,7 +766,7 @@ verifyOtpBtn.addEventListener(
 
                     email:currentEmail,
 
-                    token:otp,
+                    token:token,
 
                     type:"email"
 
@@ -1044,41 +774,28 @@ verifyOtpBtn.addEventListener(
 
 
             if(error){
+
                 throw error;
+
             }
 
 
-            /*
-            IMPORTANT
+            const user =
+                data?.session?.user ||
+                data?.user;
 
-            A successful OTP verification
-            should return a session.
-            */
 
-            if(!data?.session){
+            if(!user){
 
                 throw new Error(
-                    "OTP verified but no login session was created."
+                    "Authentication session was not created."
                 );
 
             }
 
 
-            console.log(
-                "OTP LOGIN SUCCESS",
-                data
-            );
-
-
-            showMessage(
-                "Login successful.",
-                "success"
-            );
-
-
-            showLoggedUser(
-                data.user ||
-                data.session.user
+            showUser(
+                user
             );
 
         }
@@ -1090,25 +807,9 @@ verifyOtpBtn.addEventListener(
             );
 
 
-            let errorMessage =
-                error.message ||
-                "OTP verification failed.";
-
-
-            if(
-                errorMessage
-                    .toLowerCase()
-                    .includes("expired")
-            ){
-
-                errorMessage =
-                    "This OTP has expired. Please request a new OTP.";
-
-            }
-
-
             showMessage(
-                errorMessage,
+                error?.message ||
+                "Verification failed.",
                 "error"
             );
 
@@ -1120,7 +821,7 @@ verifyOtpBtn.addEventListener(
 
 
             verifyOtpBtn.textContent =
-                "Verify OTP";
+                "Continue";
 
         }
 
@@ -1128,37 +829,22 @@ verifyOtpBtn.addEventListener(
 );
 
 
-/* =========================================
-   PRESS ENTER TO VERIFY
-========================================= */
-
-otpInput.addEventListener(
-    "keydown",
-    function(event){
-
-        if(event.key === "Enter"){
-
-            verifyOtpBtn.click();
-
-        }
-
-    }
-);
-
-
-/* =========================================
-   RESEND OTP
-========================================= */
+/* ============================
+   RESEND
+============================ */
 
 resendOtpBtn.addEventListener(
     "click",
-    async function(){
+    async () =>
+    {
 
         if(
             !currentEmail ||
             resendSeconds > 0
         ){
+
             return;
+
         }
 
 
@@ -1175,21 +861,22 @@ resendOtpBtn.addEventListener(
 
         try{
 
-            await sendEmailOtp(
+            await sendOtp(
                 currentEmail
             );
 
 
-            otpInput.value = "";
-
-
-            showMessage(
-                "A new 6-digit OTP was sent.",
-                "success"
-            );
+            otpInput.value =
+                "";
 
 
             otpInput.focus();
+
+
+            showMessage(
+                "A new verification code was sent.",
+                "success"
+            );
 
 
             startResendTimer();
@@ -1197,9 +884,10 @@ resendOtpBtn.addEventListener(
         }
         catch(error){
 
-            console.error(
-                "RESEND ERROR:",
-                error
+            showMessage(
+                error?.message ||
+                "Unable to resend code.",
+                "error"
             );
 
 
@@ -1208,12 +896,163 @@ resendOtpBtn.addEventListener(
 
 
             resendOtpBtn.textContent =
-                "Resend OTP";
+                "Resend code";
+
+        }
+
+    }
+);
+
+
+function startResendTimer(){
+
+    clearInterval(
+        resendTimer
+    );
+
+
+    resendSeconds =
+        60;
+
+
+    resendOtpBtn.disabled =
+        true;
+
+
+    const updateTimer =
+        () =>
+        {
+
+            if(resendSeconds <= 0){
+
+                clearInterval(
+                    resendTimer
+                );
+
+
+                resendOtpBtn.disabled =
+                    false;
+
+
+                resendOtpBtn.textContent =
+                    "Resend code";
+
+
+                return;
+
+            }
+
+
+            resendOtpBtn.textContent =
+                "Resend code in " +
+                resendSeconds +
+                "s";
+
+
+            resendSeconds--;
+
+        };
+
+
+    updateTimer();
+
+
+    resendTimer =
+        setInterval(
+            updateTimer,
+            1000
+        );
+
+}
+
+
+/* ============================
+   GOOGLE LOGIN
+============================ */
+
+googleBtn.addEventListener(
+    "click",
+    async () =>
+    {
+
+        clearMessage();
+
+
+        googleBtn.disabled =
+            true;
+
+
+        googleBtnText.textContent =
+            "Opening Google...";
+
+
+        try{
+
+            const redirectUrl =
+                window.location.origin +
+                window.location.pathname;
+
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient.auth.signInWithOAuth({
+
+                    provider:"google",
+
+                    options:{
+
+                        redirectTo:redirectUrl,
+
+                        skipBrowserRedirect:false,
+
+                        queryParams:{
+
+                            prompt:"select_account"
+
+                        }
+
+                    }
+
+                });
+
+
+            if(error){
+
+                throw error;
+
+            }
+
+
+            if(data?.url){
+
+                window.location.assign(
+                    data.url
+                );
+
+            }
+
+        }
+        catch(error){
+
+            console.error(
+                "GOOGLE LOGIN ERROR:",
+                error
+            );
+
+
+            googleBtn.disabled =
+                false;
+
+
+            googleBtnText.textContent =
+                "Continue with Google";
 
 
             showMessage(
-                error.message ||
-                "Unable to resend OTP.",
+                error?.message ||
+                "Google authentication failed.",
                 "error"
             );
 
@@ -1223,82 +1062,20 @@ resendOtpBtn.addEventListener(
 );
 
 
-/* =========================================
-   RESEND TIMER
-========================================= */
+/* ============================
+   AUTHENTICATED USER
+============================ */
 
-function startResendTimer(){
+function showUser(user){
 
-    clearInterval(
-        resendTimer
-    );
-
-
-    resendSeconds = 60;
-
-
-    resendOtpBtn.disabled =
-        true;
-
-
-    resendOtpBtn.textContent =
-        "Resend OTP in 60s";
-
-
-    resendTimer =
-        setInterval(
-            function(){
-
-                resendSeconds--;
-
-
-                if(resendSeconds <= 0){
-
-                    clearInterval(
-                        resendTimer
-                    );
-
-
-                    resendSeconds = 0;
-
-
-                    resendOtpBtn.disabled =
-                        false;
-
-
-                    resendOtpBtn.textContent =
-                        "Resend OTP";
-
-
-                    return;
-
-                }
-
-
-                resendOtpBtn.textContent =
-                    "Resend OTP in " +
-                    resendSeconds +
-                    "s";
-
-            },
-            1000
-        );
-
-}
-
-
-/* =========================================
-   SHOW LOGGED-IN USER
-========================================= */
-
-function showLoggedUser(user){
-
-    if(!user){
-        return;
-    }
+    if(!user) return;
 
 
     loginSection.style.display =
+        "none";
+
+
+    backBtn.style.display =
         "none";
 
 
@@ -1310,17 +1087,13 @@ function showLoggedUser(user){
         user.user_metadata || {};
 
 
-    const name =
-        metadata.full_name ||
-        metadata.name ||
-        user.email?.split("@")[0] ||
-        "CEZOO User";
-
-
     document.getElementById(
         "userName"
     ).textContent =
-        name;
+        metadata.full_name ||
+        metadata.name ||
+        user.email?.split("@")[0] ||
+        "User";
 
 
     document.getElementById(
@@ -1330,29 +1103,29 @@ function showLoggedUser(user){
 
 
     const avatar =
-        metadata.avatar_url ||
-        metadata.picture;
-
-
-    const avatarElement =
         document.getElementById(
             "userAvatar"
         );
 
 
-    if(avatar){
+    const avatarUrl =
+        metadata.avatar_url ||
+        metadata.picture;
 
-        avatarElement.src =
-            avatar;
+
+    if(avatarUrl){
+
+        avatar.src =
+            avatarUrl;
 
 
-        avatarElement.style.display =
+        avatar.style.display =
             "inline-block";
 
     }
     else{
 
-        avatarElement.style.display =
+        avatar.style.display =
             "none";
 
     }
@@ -1360,40 +1133,30 @@ function showLoggedUser(user){
 }
 
 
-/* =========================================
-   CHECK EXISTING SESSION
-========================================= */
+async function restoreSession(){
 
-async function checkSession(){
-
-    try{
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient.auth.getSession();
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.getSession();
 
 
-        if(error){
-            throw error;
-        }
-
-
-        if(data?.session?.user){
-
-            showLoggedUser(
-                data.session.user
-            );
-
-        }
-
-    }
-    catch(error){
+    if(error){
 
         console.error(
-            "SESSION ERROR:",
             error
+        );
+
+        return;
+
+    }
+
+
+    if(data?.session?.user){
+
+        showUser(
+            data.session.user
         );
 
     }
@@ -1401,22 +1164,13 @@ async function checkSession(){
 }
 
 
-/* =========================================
-   AUTH STATE LISTENER
-========================================= */
-
 supabaseClient.auth.onAuthStateChange(
-    function(event,session){
-
-        console.log(
-            "AUTH EVENT:",
-            event
-        );
-
+    (event,session) =>
+    {
 
         if(session?.user){
 
-            showLoggedUser(
+            showUser(
                 session.user
             );
 
@@ -1426,49 +1180,37 @@ supabaseClient.auth.onAuthStateChange(
 );
 
 
-/* =========================================
-   LOGOUT
-========================================= */
-
 logoutBtn.addEventListener(
     "click",
-    async function(){
+    async () =>
+    {
 
-        try{
-
-            const { error } =
-                await supabaseClient.auth.signOut();
-
-
-            if(error){
-                throw error;
-            }
+        const {
+            error
+        } =
+            await supabaseClient.auth.signOut();
 
 
-            window.location.reload();
-
-        }
-        catch(error){
+        if(error){
 
             console.error(
-                "LOGOUT ERROR:",
                 error
             );
 
+            return;
+
         }
+
+
+        window.location.reload();
 
     }
 );
 
 
-/* =========================================
-   START
-========================================= */
-
-checkSession();
+restoreSession();
 
 </script>
-
 
 </body>
 </html>
