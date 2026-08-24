@@ -1509,7 +1509,8 @@ Redirect URLs
 */
 
 const GOOGLE_RETURN_URL =
-    " https://vijay77801.github.io/gmail/";
+    window.location.origin +
+    window.location.pathname;
 
 
 /*
@@ -2589,12 +2590,43 @@ async function restoreGoogleLogin(){
 
 
         /*
-        Store real Gmail.
+        Store real Gmail returned by Google/Supabase.
         */
 
         saveAuthenticatedGmail(
             session.user
         );
+
+
+        /*
+        Clean the OAuth callback query/hash AFTER the
+        Supabase session has been restored.
+        This keeps the browser on the exact same careers page.
+        */
+        try{
+
+            if(
+                window.location.search ||
+                window.location.hash
+            ){
+
+                window.history.replaceState(
+                    {},
+                    document.title,
+                    window.location.pathname
+                );
+
+            }
+
+        }
+        catch(cleanUrlError){
+
+            console.warn(
+                "Could not clean OAuth callback URL:",
+                cleanUrlError
+            );
+
+        }
 
 
         /*
