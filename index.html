@@ -1,145 +1,3065 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-const RESEND_API_KEY =
-Deno.env.get("RESEND_API_KEY");
+<title>Careers | Cezonal Solutions Private Limited</title>
 
-const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type"
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+/* =========================================================
+   RESET
+========================================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    min-height:100vh;
+
+    font-family:
+        Inter,
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:#fff;
+    color:#171717;
+}
+
+button,
+input,
+textarea,
+select{
+    font:inherit;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header{
+    position:sticky;
+    top:0;
+    z-index:100;
+
+    width:100%;
+
+    background:rgba(255,255,255,.96);
+
+    border-bottom:1px solid #eeeeef;
+
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+}
+
+.header-inner{
+    width:100%;
+    max-width:1200px;
+
+    min-height:76px;
+
+    margin:auto;
+    padding:0 22px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.brand{
+    display:flex;
+    flex-direction:column;
+}
+
+.brand strong{
+    font-size:20px;
+    font-weight:750;
+
+    letter-spacing:-.5px;
+}
+
+.brand span{
+    margin-top:3px;
+
+    color:#888;
+
+    font-size:9px;
+    font-weight:600;
+
+    text-transform:uppercase;
+
+    letter-spacing:2.4px;
+}
+
+.header-label{
+    color:#777;
+
+    font-size:12px;
+    font-weight:600;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+    width:100%;
+
+    padding:90px 20px 65px;
+
+    text-align:center;
+
+    background:
+        radial-gradient(
+            circle at 50% 10%,
+            #f6f8ff 0%,
+            #fff 65%
+        );
+}
+
+.hero-small{
+    color:#777;
+
+    font-size:10px;
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    letter-spacing:3px;
+}
+
+.hero h1{
+    max-width:780px;
+
+    margin:14px auto 0;
+
+    font-size:52px;
+    font-weight:650;
+
+    line-height:1.07;
+
+    letter-spacing:-2.5px;
+}
+
+.hero p{
+    max-width:620px;
+
+    margin:18px auto 0;
+
+    color:#666;
+
+    font-size:14px;
+    line-height:1.7;
+}
+
+
+/* =========================================================
+   JOBS
+========================================================= */
+
+.jobs{
+    width:100%;
+
+    padding:65px 20px 100px;
+}
+
+.jobs-inner{
+    width:100%;
+    max-width:1050px;
+
+    margin:auto;
+}
+
+.jobs-title{
+    margin-bottom:30px;
+
+    font-size:29px;
+    font-weight:650;
+
+    letter-spacing:-1px;
+}
+
+.job-card{
+    position:relative;
+
+    width:100%;
+
+    padding:28px 28px;
+
+    display:grid;
+
+    grid-template-columns:
+        minmax(0,1fr)
+        auto;
+
+    gap:24px;
+
+    align-items:center;
+
+    border-top:1px solid #e8e8e9;
+}
+
+.job-card:last-child{
+    border-bottom:1px solid #e8e8e9;
+}
+
+.job-role{
+    font-size:22px;
+    font-weight:650;
+
+    letter-spacing:-.7px;
+}
+
+.job-details{
+    margin-top:10px;
+
+    display:flex;
+    flex-wrap:wrap;
+
+    gap:8px;
+}
+
+.job-pill{
+    padding:6px 9px;
+
+    border-radius:100px;
+
+    background:#f5f5f6;
+
+    color:#666;
+
+    font-size:10px;
+    font-weight:600;
+}
+
+.job-description{
+    max-width:650px;
+
+    margin-top:13px;
+
+    color:#777;
+
+    font-size:12.5px;
+    line-height:1.65;
+}
+
+.apply-btn{
+    min-width:120px;
+    min-height:46px;
+
+    padding:0 20px;
+
+    border:none;
+    border-radius:12px;
+
+    background:#111;
+
+    color:#fff;
+
+    font-size:12px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:
+        transform .2s ease,
+        background .2s ease;
+}
+
+.apply-btn:hover{
+    transform:translateY(-2px);
+
+    background:#292929;
+}
+
+
+/* =========================================================
+   MODAL OVERLAY
+========================================================= */
+
+.auth-overlay{
+    position:fixed;
+
+    inset:0;
+
+    z-index:999999;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:18px;
+
+    background:rgba(10,10,10,.50);
+
+    backdrop-filter:blur(9px);
+    -webkit-backdrop-filter:blur(9px);
+}
+
+.auth-overlay.show{
+    display:flex;
+}
+
+.auth-modal{
+    position:relative;
+
+    width:100%;
+    max-width:440px;
+
+    max-height:calc(100vh - 36px);
+
+    overflow-y:auto;
+
+    padding:28px;
+
+    background:#fff;
+
+    border:1px solid #e8e8ea;
+    border-radius:24px;
+
+    box-shadow:
+        0 30px 100px rgba(0,0,0,.25);
+}
+
+.close-btn{
+    position:absolute;
+
+    top:15px;
+    right:15px;
+
+    width:36px;
+    height:36px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:1px solid #e5e5e8;
+    border-radius:50%;
+
+    background:#fff;
+
+    color:#333;
+
+    font-size:21px;
+
+    cursor:pointer;
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+.auth-head{
+    padding-right:38px;
+
+    margin-bottom:24px;
+}
+
+.auth-head h2{
+    font-size:23px;
+    font-weight:700;
+
+    letter-spacing:-.7px;
+}
+
+.auth-head p{
+    margin-top:8px;
+
+    color:#777;
+
+    font-size:12.5px;
+    line-height:1.55;
+}
+
+.selected-role{
+    display:inline-flex;
+
+    margin-top:12px;
+
+    padding:7px 10px;
+
+    border-radius:100px;
+
+    background:#f4f4f5;
+
+    color:#444;
+
+    font-size:10.5px;
+    font-weight:700;
+}
+
+.label{
+    display:block;
+
+    margin-bottom:8px;
+
+    font-size:12px;
+    font-weight:700;
+}
+
+.input,
+.textarea{
+    width:100%;
+
+    border:1px solid #d9dbe0;
+    border-radius:13px;
+
+    outline:none;
+
+    background:#fff;
+
+    color:#171717;
+
+    font-size:14px;
+}
+
+.input{
+    height:50px;
+
+    padding:0 14px;
+}
+
+.textarea{
+    min-height:105px;
+
+    padding:13px 14px;
+
+    resize:vertical;
+}
+
+.input:focus,
+.textarea:focus{
+    border-color:#111;
+
+    box-shadow:
+        0 0 0 3px rgba(0,0,0,.05);
+}
+
+.input[readonly]{
+    background:#f7f7f8;
+
+    color:#555;
+}
+
+.main-btn{
+    width:100%;
+
+    min-height:50px;
+
+    border:none;
+    border-radius:13px;
+
+    cursor:pointer;
+
+    font-size:13.5px;
+    font-weight:700;
+}
+
+.main-btn:disabled{
+    opacity:.55;
+
+    cursor:not-allowed;
+}
+
+.dark-btn{
+    margin-top:12px;
+
+    background:#111;
+
+    color:#fff;
+}
+
+.dark-btn:hover:not(:disabled){
+    background:#292929;
+}
+
+
+/* =========================================================
+   OTP
+========================================================= */
+
+.otp-area{
+    display:none;
+
+    margin-top:17px;
+
+    padding-top:17px;
+
+    border-top:1px solid #efeff1;
+}
+
+.otp-area.show{
+    display:block;
+}
+
+.otp-input{
+    text-align:center;
+
+    letter-spacing:10px;
+
+    font-size:23px;
+    font-weight:700;
+
+    padding-left:24px;
+}
+
+.helper{
+    margin-top:8px;
+
+    color:#777;
+
+    font-size:11.5px;
+    line-height:1.5;
+}
+
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+.divider{
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin:21px 0;
+
+    color:#a0a0a6;
+
+    font-size:10px;
+
+    text-transform:uppercase;
+
+    letter-spacing:1.4px;
+}
+
+.divider:before,
+.divider:after{
+    content:"";
+
+    flex:1;
+
+    height:1px;
+
+    background:#ececef;
+}
+
+
+/* =========================================================
+   GOOGLE BUTTON
+========================================================= */
+
+.google-btn{
+    width:100%;
+
+    min-height:50px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    gap:10px;
+
+    border:1px solid #dadce0;
+    border-radius:13px;
+
+    background:#fff;
+
+    color:#202124;
+
+    font-size:13px;
+    font-weight:700;
+
+    cursor:pointer;
+}
+
+.google-btn:hover{
+    background:#f8f9fa;
+}
+
+.google-btn svg{
+    width:18px;
+    height:18px;
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.message{
+    display:none;
+
+    margin-top:15px;
+
+    padding:11px 12px;
+
+    border-radius:11px;
+
+    font-size:12px;
+    line-height:1.45;
+}
+
+.message.show{
+    display:block;
+}
+
+.message.ok{
+    border:1px solid #bbf7d0;
+
+    background:#ecfdf3;
+
+    color:#166534;
+}
+
+.message.error{
+    border:1px solid #fecdd3;
+
+    background:#fff1f2;
+
+    color:#9f1239;
+}
+
+
+/* =========================================================
+   APPLICATION
+========================================================= */
+
+.application-view{
+    display:none;
+}
+
+.application-view.show{
+    display:block;
+}
+
+.authenticated-email{
+    margin-bottom:15px;
+
+    padding:12px 13px;
+
+    border:1px solid #dcecdf;
+    border-radius:12px;
+
+    background:#f3faf5;
+
+    color:#58705d;
+
+    font-size:11px;
+}
+
+.authenticated-email strong{
+    display:block;
+
+    margin-top:4px;
+
+    color:#163d20;
+
+    font-size:13px;
+
+    word-break:break-word;
+}
+
+.form-field{
+    margin-top:14px;
+}
+
+
+/* =========================================================
+   SUCCESS
+========================================================= */
+
+.success-view{
+    display:none;
+
+    padding:18px 0 5px;
+
+    text-align:center;
+}
+
+.success-view.show{
+    display:block;
+}
+
+.success-icon{
+    width:64px;
+    height:64px;
+
+    margin:0 auto 18px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:#ecfdf3;
+
+    color:#15803d;
+
+    font-size:30px;
+    font-weight:800;
+}
+
+.success-view h3{
+    font-size:21px;
+}
+
+.success-view p{
+    max-width:330px;
+
+    margin:10px auto 0;
+
+    color:#707070;
+
+    font-size:12px;
+    line-height:1.6;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:700px){
+
+    .hero{
+        padding:
+            65px 17px
+            45px;
+    }
+
+    .hero h1{
+        font-size:37px;
+
+        letter-spacing:-1.6px;
+    }
+
+    .jobs{
+        padding:
+            45px 14px
+            70px;
+    }
+
+    .job-card{
+        grid-template-columns:1fr;
+
+        padding:
+            24px 4px;
+    }
+
+    .apply-btn{
+        width:100%;
+    }
+
+}
+
+
+@media(max-width:520px){
+
+    .header-inner{
+        min-height:68px;
+
+        padding:0 15px;
+    }
+
+    .brand strong{
+        font-size:17px;
+    }
+
+    .header-label{
+        font-size:10px;
+    }
+
+    .auth-overlay{
+        padding:10px;
+
+        align-items:flex-end;
+    }
+
+    .auth-modal{
+        max-height:93vh;
+
+        padding:
+            23px 18px;
+
+        border-radius:
+            22px 22px
+            16px 16px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     HEADER
+====================================================== -->
+
+<header class="header">
+
+    <div class="header-inner">
+
+        <div class="brand">
+
+            <strong>
+                Cezonal Solutions
+            </strong>
+
+            <span>
+                Private Limited
+            </span>
+
+        </div>
+
+        <div class="header-label">
+            Careers
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- ======================================================
+     HERO
+====================================================== -->
+
+<section class="hero">
+
+    <div class="hero-small">
+        Careers
+    </div>
+
+    <h1>
+        Build products that
+        make everyday life better.
+    </h1>
+
+    <p>
+        Join Cezonal Solutions and work
+        on technology, design and digital
+        products including CEZOO.
+    </p>
+
+</section>
+
+
+<!-- ======================================================
+     JOBS
+====================================================== -->
+
+<section class="jobs">
+
+    <div class="jobs-inner">
+
+        <h2 class="jobs-title">
+            Current openings
+        </h2>
+
+
+        <!-- UI UX -->
+
+        <article
+            class="job-card"
+            data-role="UI/UX Designer"
+        >
+
+            <div>
+
+                <h3 class="job-role">
+                    UI/UX Designer
+                </h3>
+
+                <div class="job-details">
+
+                    <span class="job-pill">
+                        Full Time
+                    </span>
+
+                    <span class="job-pill">
+                        0 - 1 Year
+                    </span>
+
+                    <span class="job-pill">
+                        Any Degree
+                    </span>
+
+                    <span class="job-pill">
+                        ₹1.5 - ₹2 LPA
+                    </span>
+
+                </div>
+
+                <p class="job-description">
+                    Design simple, modern and
+                    user-friendly experiences
+                    for CEZOO and other Cezonal
+                    Solutions digital products.
+                </p>
+
+            </div>
+
+            <button
+                class="apply-btn"
+                type="button"
+            >
+                Apply Now
+            </button>
+
+        </article>
+
+
+        <!-- VIDEO EDITOR -->
+
+        <article
+            class="job-card"
+            data-role="Video Editor"
+        >
+
+            <div>
+
+                <h3 class="job-role">
+                    Video Editor
+                </h3>
+
+                <div class="job-details">
+
+                    <span class="job-pill">
+                        Full Time
+                    </span>
+
+                    <span class="job-pill">
+                        0 - 1 Year
+                    </span>
+
+                    <span class="job-pill">
+                        Any Degree
+                    </span>
+
+                    <span class="job-pill">
+                        ₹1.5 - ₹2 LPA
+                    </span>
+
+                </div>
+
+                <p class="job-description">
+                    Create engaging product,
+                    marketing and social media
+                    videos for CEZOO and Cezonal
+                    Solutions.
+                </p>
+
+            </div>
+
+            <button
+                class="apply-btn"
+                type="button"
+            >
+                Apply Now
+            </button>
+
+        </article>
+
+
+        <!-- CONTENT CREATOR -->
+
+        <article
+            class="job-card"
+            data-role="Content Creator"
+        >
+
+            <div>
+
+                <h3 class="job-role">
+                    Content Creator
+                </h3>
+
+                <div class="job-details">
+
+                    <span class="job-pill">
+                        Full Time
+                    </span>
+
+                    <span class="job-pill">
+                        0 - 1 Year
+                    </span>
+
+                    <span class="job-pill">
+                        Any Degree
+                    </span>
+
+                    <span class="job-pill">
+                        ₹1.5 - ₹2 LPA
+                    </span>
+
+                </div>
+
+                <p class="job-description">
+                    Create engaging content,
+                    campaigns and social media
+                    material for CEZOO and our
+                    digital products.
+                </p>
+
+            </div>
+
+            <button
+                class="apply-btn"
+                type="button"
+            >
+                Apply Now
+            </button>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     AUTH + APPLICATION MODAL
+====================================================== -->
+
+<div
+    class="auth-overlay"
+    id="authOverlay"
+>
+
+    <div class="auth-modal">
+
+
+        <button
+            class="close-btn"
+            id="closeModalBtn"
+            type="button"
+        >
+            ×
+        </button>
+
+
+        <!-- ==============================================
+             AUTH VIEW
+        =============================================== -->
+
+        <div id="authView">
+
+            <div class="auth-head">
+
+                <h2>
+                    Continue your application
+                </h2>
+
+                <p>
+                    Verify your email with a
+                    6-digit OTP or continue
+                    securely with Google.
+                </p>
+
+                <div
+                    class="selected-role"
+                    id="selectedRole"
+                >
+                    Job Application
+                </div>
+
+            </div>
+
+
+            <label
+                class="label"
+                for="authEmail"
+            >
+                Email address
+            </label>
+
+
+            <input
+                class="input"
+                id="authEmail"
+                type="email"
+                autocomplete="email"
+                placeholder="you@gmail.com"
+            >
+
+
+            <button
+                class="main-btn dark-btn"
+                id="sendOtpBtn"
+                type="button"
+            >
+                Send OTP
+            </button>
+
+
+            <!-- OTP -->
+
+            <div
+                class="otp-area"
+                id="otpArea"
+            >
+
+                <label
+                    class="label"
+                    for="otpInput"
+                >
+                    Enter 6-digit OTP
+                </label>
+
+
+                <input
+                    class="input otp-input"
+                    id="otpInput"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="6"
+                    autocomplete="one-time-code"
+                    placeholder="------"
+                >
+
+
+                <div class="helper">
+
+                    Enter the verification
+                    code sent to your email.
+
+                </div>
+
+
+                <button
+                    class="main-btn dark-btn"
+                    id="verifyOtpBtn"
+                    type="button"
+                >
+                    Verify OTP
+                </button>
+
+            </div>
+
+
+            <div class="divider">
+                or
+            </div>
+
+
+            <!-- GOOGLE -->
+
+            <button
+                class="google-btn"
+                id="googleBtn"
+                type="button"
+            >
+
+                <svg
+                    viewBox="0 0 48 48"
+                    aria-hidden="true"
+                >
+
+                    <path
+                        fill="#FFC107"
+                        d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12S17.4 12 24 12c3 0 5.7 1.1 7.8 3l5.7-5.7C33.9 6 29.2 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"
+                    />
+
+                    <path
+                        fill="#FF3D00"
+                        d="M6.3 14.7l6.6 4.8C14.7 15.1 18.9 12 24 12c3 0 5.7 1.1 7.8 3l5.7-5.7C33.9 6 29.2 4 24 4c-7.7 0-14.3 4.3-17.7 10.7z"
+                    />
+
+                    <path
+                        fill="#4CAF50"
+                        d="M24 44c5 0 9.6-1.9 13-5.1l-6-5.1C29 35.3 26.6 36 24 36c-5.2 0-9.7-3.3-11.3-8l-6.5 5C9.6 39.5 16.2 44 24 44z"
+                    />
+
+                    <path
+                        fill="#1976D2"
+                        d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.3 5.8l6 5.1C36.6 39.2 44 33.7 44 24c0-1.3-.1-2.4-.4-3.5z"
+                    />
+
+                </svg>
+
+                Continue with Google
+
+            </button>
+
+
+            <div
+                class="message"
+                id="authMessage"
+            ></div>
+
+        </div>
+
+
+        <!-- ==============================================
+             APPLICATION FORM
+        =============================================== -->
+
+        <form
+            class="application-view"
+            id="applicationForm"
+        >
+
+            <div class="auth-head">
+
+                <h2>
+                    Job Application
+                </h2>
+
+                <p>
+                    Complete your details
+                    below.
+                </p>
+
+                <div
+                    class="selected-role"
+                    id="applicationRole"
+                >
+                    Job Application
+                </div>
+
+            </div>
+
+
+            <div class="authenticated-email">
+
+                Authenticated Gmail
+
+                <strong
+                    id="authenticatedEmailText"
+                ></strong>
+
+            </div>
+
+
+            <!-- NAME -->
+
+            <div class="form-field">
+
+                <label
+                    class="label"
+                    for="fullName"
+                >
+                    Full name
+                </label>
+
+                <input
+                    class="input"
+                    id="fullName"
+                    type="text"
+                    autocomplete="name"
+                    required
+                >
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="form-field">
+
+                <label
+                    class="label"
+                    for="applicationEmail"
+                >
+                    Email
+                </label>
+
+                <input
+                    class="input"
+                    id="applicationEmail"
+                    type="email"
+                    readonly
+                    required
+                >
+
+            </div>
+
+
+            <!-- PHONE -->
+
+            <div class="form-field">
+
+                <label
+                    class="label"
+                    for="phone"
+                >
+                    Phone number
+                </label>
+
+                <input
+                    class="input"
+                    id="phone"
+                    type="tel"
+                    autocomplete="tel"
+                    required
+                >
+
+            </div>
+
+
+            <!-- LOCATION -->
+
+            <div class="form-field">
+
+                <label
+                    class="label"
+                    for="location"
+                >
+                    Location
+                </label>
+
+                <input
+                    class="input"
+                    id="location"
+                    type="text"
+                >
+
+            </div>
+
+
+            <!-- EXPERIENCE -->
+
+            <div class="form-field">
+
+                <label
+                    class="label"
+                    for="experience"
+                >
+                    Experience
+                </label>
+
+                <input
+                    class="input"
+                    id="experience"
+                    type="text"
+                    placeholder="Example: Fresher / 0-1 year"
+                >
+
+            </div>
+
+
+            <!-- QUALIFICATION -->
+
+            <div class="form-field">
+
+                <label
+                    class="label"
+                    for="qualification"
+                >
+                    Qualification
+                </label>
+
+                <input
+                    class="input"
+                    id="qualification"
+                    type="text"
+                    placeholder="Any Degree"
+                >
+
+            </div>
+
+
+            <!-- PORTFOLIO -->
+
+            <div class="form-field">
+
+                <label
+                    class="label"
+                    for="portfolio"
+                >
+                    Portfolio / Profile URL
+                </label>
+
+                <input
+                    class="input"
+                    id="portfolio"
+                    type="url"
+                    placeholder="https://..."
+                >
+
+            </div>
+
+
+            <!-- MESSAGE -->
+
+            <div class="form-field">
+
+                <label
+                    class="label"
+                    for="applicationMessage"
+                >
+                    Message
+                </label>
+
+                <textarea
+                    class="textarea"
+                    id="applicationMessage"
+                    placeholder="Tell us briefly about yourself"
+                ></textarea>
+
+            </div>
+
+
+            <button
+                class="main-btn dark-btn"
+                id="submitApplicationBtn"
+                type="submit"
+            >
+                Submit Application
+            </button>
+
+
+            <div
+                class="message"
+                id="formMessage"
+            ></div>
+
+        </form>
+
+
+        <!-- ==============================================
+             SUCCESS
+        =============================================== -->
+
+        <div
+            class="success-view"
+            id="successView"
+        >
+
+            <div class="success-icon">
+                ✓
+            </div>
+
+            <h3>
+                Application Submitted
+            </h3>
+
+            <p>
+                Your application has been
+                submitted successfully.
+                A confirmation email will
+                be sent to your authenticated
+                Gmail.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* =========================================================
+   SUPABASE CONFIG
+========================================================= */
+
+const SUPABASE_URL =
+    "https://yezfrkciwosyyookyogs.supabase.co";
+
+
+const SUPABASE_ANON_KEY =
+    "sb_publishable_v97iTR8ILzJ_K0X1vmeYiA_SrZcsd57";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+/*
+Google login returns HERE.
+
+Make sure this URL exists in:
+
+Supabase
+Authentication
+URL Configuration
+Redirect URLs
+*/
+
+const GOOGLE_RETURN_URL =
+    "https://cezonalsolutions.com/career.html";
+
+
+/*
+Your Edge Function name.
+*/
+
+const APPLICATION_EMAIL_FUNCTION =
+    "send-application-email";
+
+
+/* =========================================================
+   LOCAL STORAGE KEYS
+========================================================= */
+
+const AUTH_GMAIL_KEY =
+    "authenticatedGmail";
+
+
+const AUTH_DATA_KEY =
+    "cezonal_job_auth";
+
+
+const PENDING_ROLE_KEY =
+    "cezonal_pending_job_role";
+
+
+let currentRole =
+    "Job Application";
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const authOverlay =
+    document.getElementById(
+        "authOverlay"
+    );
+
+
+const closeModalBtn =
+    document.getElementById(
+        "closeModalBtn"
+    );
+
+
+const authView =
+    document.getElementById(
+        "authView"
+    );
+
+
+const applicationForm =
+    document.getElementById(
+        "applicationForm"
+    );
+
+
+const successView =
+    document.getElementById(
+        "successView"
+    );
+
+
+const selectedRole =
+    document.getElementById(
+        "selectedRole"
+    );
+
+
+const applicationRole =
+    document.getElementById(
+        "applicationRole"
+    );
+
+
+const authEmail =
+    document.getElementById(
+        "authEmail"
+    );
+
+
+const otpInput =
+    document.getElementById(
+        "otpInput"
+    );
+
+
+const otpArea =
+    document.getElementById(
+        "otpArea"
+    );
+
+
+const sendOtpBtn =
+    document.getElementById(
+        "sendOtpBtn"
+    );
+
+
+const verifyOtpBtn =
+    document.getElementById(
+        "verifyOtpBtn"
+    );
+
+
+const googleBtn =
+    document.getElementById(
+        "googleBtn"
+    );
+
+
+const authMessage =
+    document.getElementById(
+        "authMessage"
+    );
+
+
+const formMessage =
+    document.getElementById(
+        "formMessage"
+    );
+
+
+const authenticatedEmailText =
+    document.getElementById(
+        "authenticatedEmailText"
+    );
+
+
+const applicationEmail =
+    document.getElementById(
+        "applicationEmail"
+    );
+
+
+const submitApplicationBtn =
+    document.getElementById(
+        "submitApplicationBtn"
+    );
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function showMessage(
+    element,
+    text,
+    type = "ok"
+){
+
+    element.textContent =
+        text;
+
+
+    element.className =
+        "message show " +
+        (
+            type === "error"
+                ? "error"
+                : "ok"
+        );
+
+}
+
+
+function clearMessage(
+    element
+){
+
+    element.textContent =
+        "";
+
+
+    element.className =
+        "message";
+
+}
+
+
+function setButtonLoading(
+    button,
+    loading,
+    loadingText,
+    normalText
+){
+
+    button.disabled =
+        loading;
+
+
+    button.textContent =
+        loading
+            ? loadingText
+            : normalText;
+
+}
+
+
+/* =========================================================
+   SAVE REAL AUTHENTICATED GMAIL
+========================================================= */
+
+function saveAuthenticatedGmail(
+    user
+){
+
+    if(
+        !user ||
+        !user.email
+    ){
+
+        console.error(
+            "Authenticated Gmail missing"
+        );
+
+        return null;
+
+    }
+
+
+    const email =
+        String(
+            user.email
+        )
+        .trim()
+        .toLowerCase();
+
+
+    const authData = {
+
+        email:
+            email,
+
+        userId:
+            user.id || null,
+
+        verified:
+            true,
+
+        provider:
+            user
+                .app_metadata
+                ?.provider
+            ||
+            "email",
+
+        savedAt:
+            new Date()
+            .toISOString()
+
+    };
+
+
+    /*
+    Store authenticated Gmail.
+    */
+
+    localStorage.setItem(
+        AUTH_GMAIL_KEY,
+        email
+    );
+
+
+    /*
+    Store complete auth data.
+    */
+
+    localStorage.setItem(
+        AUTH_DATA_KEY,
+        JSON.stringify(
+            authData
+        )
+    );
+
+
+    /*
+    Also expose it for Console.
+    */
+
+    window.authenticatedGmail =
+        email;
+
+
+    console.log(
+        "================================"
+    );
+
+
+    console.log(
+        "AUTHENTICATED GMAIL:",
+        email
+    );
+
+
+    console.log(
+        "LOCAL STORAGE EMAIL:",
+        localStorage.getItem(
+            AUTH_GMAIL_KEY
+        )
+    );
+
+
+    console.log(
+        "AUTH DATA:",
+        authData
+    );
+
+
+    console.log(
+        "================================"
+    );
+
+
+    return email;
+
+}
+
+
+/*
+You can type this in Console:
+showAuthenticatedGmail()
+*/
+
+window.showAuthenticatedGmail =
+function(){
+
+    const email =
+        localStorage.getItem(
+            AUTH_GMAIL_KEY
+        );
+
+
+    console.log(
+        "AUTHENTICATED GMAIL:",
+        email
+    );
+
+
+    return email;
+
 };
 
-serve(async (req) => {
 
-    if (req.method === "OPTIONS") {
-        return new Response("ok", {
-            headers: corsHeaders
-        });
-    }
+/* =========================================================
+   OPEN APPLY
+========================================================= */
 
-    try {
+async function openApplyModal(
+    role
+){
+
+    currentRole =
+        role ||
+        "Job Application";
+
+
+    localStorage.setItem(
+        PENDING_ROLE_KEY,
+        currentRole
+    );
+
+
+    selectedRole.textContent =
+        currentRole;
+
+
+    applicationRole.textContent =
+        currentRole;
+
+
+    authView.style.display =
+        "block";
+
+
+    applicationForm.classList.remove(
+        "show"
+    );
+
+
+    successView.classList.remove(
+        "show"
+    );
+
+
+    clearMessage(
+        authMessage
+    );
+
+
+    clearMessage(
+        formMessage
+    );
+
+
+    authOverlay.classList.add(
+        "show"
+    );
+
+
+    document.documentElement.style.overflow =
+        "hidden";
+
+
+    /*
+    Check if user is already authenticated.
+    */
+
+    try{
 
         const {
-            name,
-            email
-        } = await req.json();
+            data:{
+                session
+            }
+        } =
+            await supabaseClient
+            .auth
+            .getSession();
 
-        if (!name || !email) {
-            return new Response(
-                JSON.stringify({
-                    success: false,
-                    error: "Name and email are required"
-                }),
-                {
-                    status: 400,
-                    headers: {
-                        ...corsHeaders,
-                        "Content-Type": "application/json"
-                    }
-                }
+
+        if(
+            session &&
+            session.user &&
+            session.user.email
+        ){
+
+            showApplicationForm(
+                session.user
             );
+
         }
 
-        const response = await fetch(
-            "https://api.resend.com/emails",
-            {
-                method: "POST",
+    }
+    catch(error){
 
-                headers: {
-                    "Authorization":
-                    `Bearer ${RESEND_API_KEY}`,
+        console.error(
+            "SESSION ERROR:",
+            error
+        );
 
-                    "Content-Type":
-                    "application/json"
-                },
+    }
 
-                body: JSON.stringify({
+}
 
-                    from:
-                    "Cezonal Solutions <onboarding@resend.dev>",
 
-                    to: [email],
+/* =========================================================
+   APPLY NOW BUTTONS
+========================================================= */
 
-                    subject:
-                    "Application Submitted Successfully",
+document
+.querySelectorAll(
+    ".apply-btn"
+)
+.forEach(
+    function(button){
 
-                    html: `
-                        <div style="
-                            font-family:Arial,sans-serif;
-                            max-width:600px;
-                            margin:auto;
-                            padding:30px;
-                        ">
+        button.addEventListener(
+            "click",
+            function(){
 
-                            <h2>
-                                Application Submitted Successfully
-                            </h2>
+                const card =
+                    this.closest(
+                        ".job-card"
+                    );
 
-                            <p>
-                                Hello ${name},
-                            </p>
 
-                            <p>
-                                Your application has been submitted successfully.
-                            </p>
+                const role =
+                    card
+                        ?.dataset
+                        ?.role
+                    ||
+                    "Job Application";
 
-                            <p>
-                                We have received your details.
-                            </p>
 
-                            <p>
-                                Thank you.
-                            </p>
+                openApplyModal(
+                    role
+                );
 
-                            <p>
-                                Cezonal Solutions
-                            </p>
-
-                        </div>
-                    `
-                })
             }
         );
 
-        const result =
-        await response.json();
+    }
+);
 
-        if (!response.ok) {
+
+/* =========================================================
+   CLOSE
+========================================================= */
+
+function closeModal(){
+
+    authOverlay.classList.remove(
+        "show"
+    );
+
+
+    document.documentElement.style.overflow =
+        "";
+
+}
+
+
+closeModalBtn.addEventListener(
+    "click",
+    closeModal
+);
+
+
+authOverlay.addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target ===
+            authOverlay
+        ){
+
+            closeModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   SEND OTP
+========================================================= */
+
+async function sendOtp(){
+
+    clearMessage(
+        authMessage
+    );
+
+
+    const email =
+        authEmail
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    if(
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        .test(email)
+    ){
+
+        showMessage(
+            authMessage,
+            "Please enter a valid email address.",
+            "error"
+        );
+
+
+        authEmail.focus();
+
+
+        return;
+
+    }
+
+
+    setButtonLoading(
+        sendOtpBtn,
+        true,
+        "Sending OTP...",
+        "Send OTP"
+    );
+
+
+    try{
+
+        const {
+            error
+        } =
+            await supabaseClient
+            .auth
+            .signInWithOtp({
+
+                email:
+                    email,
+
+                options:{
+
+                    shouldCreateUser:
+                        true
+
+                }
+
+            });
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        otpArea.classList.add(
+            "show"
+        );
+
+
+        showMessage(
+            authMessage,
+            "OTP sent. Check your email and enter the 6-digit code."
+        );
+
+
+        otpInput.focus();
+
+    }
+    catch(error){
+
+        console.error(
+            "OTP SEND ERROR:",
+            error
+        );
+
+
+        showMessage(
+            authMessage,
+            error?.message
+            ||
+            "Unable to send OTP.",
+            "error"
+        );
+
+    }
+    finally{
+
+        setButtonLoading(
+            sendOtpBtn,
+            false,
+            "Sending OTP...",
+            "Send OTP"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   VERIFY OTP
+========================================================= */
+
+async function verifyOtp(){
+
+    clearMessage(
+        authMessage
+    );
+
+
+    const email =
+        authEmail
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    const otp =
+        otpInput
+        .value
+        .replace(
+            /\D/g,
+            ""
+        );
+
+
+    if(
+        otp.length !== 6
+    ){
+
+        showMessage(
+            authMessage,
+            "Enter the complete 6-digit OTP.",
+            "error"
+        );
+
+
+        otpInput.focus();
+
+
+        return;
+
+    }
+
+
+    setButtonLoading(
+        verifyOtpBtn,
+        true,
+        "Verifying...",
+        "Verify OTP"
+    );
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+            .auth
+            .verifyOtp({
+
+                email:
+                    email,
+
+                token:
+                    otp,
+
+                type:
+                    "email"
+
+            });
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        if(
+            !data ||
+            !data.user ||
+            !data.user.email
+        ){
+
             throw new Error(
-                result.message ||
-                "Email sending failed"
+                "Authenticated Gmail was not returned."
             );
+
         }
 
-        return new Response(
-            JSON.stringify({
-                success: true,
-                result
-            }),
-            {
-                headers: {
-                    ...corsHeaders,
-                    "Content-Type": "application/json"
-                }
-            }
+
+        /*
+        IMPORTANT:
+
+        OTP SUCCESS DOES NOT REDIRECT
+        TO THE WEBSITE.
+
+        Application opens on same page.
+        */
+
+        showApplicationForm(
+            data.user
         );
 
     }
-    catch (error) {
+    catch(error){
 
-        return new Response(
-            JSON.stringify({
-                success: false,
-                error: error.message
-            }),
-            {
-                status: 500,
-                headers: {
-                    ...corsHeaders,
-                    "Content-Type": "application/json"
-                }
-            }
+        console.error(
+            "OTP VERIFY ERROR:",
+            error
         );
+
+
+        showMessage(
+            authMessage,
+            error?.message
+            ||
+            "Invalid or expired OTP.",
+            "error"
+        );
+
+    }
+    finally{
+
+        setButtonLoading(
+            verifyOtpBtn,
+            false,
+            "Verifying...",
+            "Verify OTP"
+        );
+
     }
 
-});
+}
+
+
+/* =========================================================
+   OTP EVENTS
+========================================================= */
+
+sendOtpBtn.addEventListener(
+    "click",
+    sendOtp
+);
+
+
+verifyOtpBtn.addEventListener(
+    "click",
+    verifyOtp
+);
+
+
+otpInput.addEventListener(
+    "input",
+    function(){
+
+        this.value =
+            this.value
+            .replace(
+                /\D/g,
+                ""
+            )
+            .slice(
+                0,
+                6
+            );
+
+    }
+);
+
+
+otpInput.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key ===
+            "Enter"
+        ){
+
+            verifyOtp();
+
+        }
+
+    }
+);
+
+
+authEmail.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key ===
+            "Enter"
+        ){
+
+            sendOtp();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   GOOGLE LOGIN
+========================================================= */
+
+async function continueWithGoogle(){
+
+    clearMessage(
+        authMessage
+    );
+
+
+    googleBtn.disabled =
+        true;
+
+
+    /*
+    Remember which job was selected.
+    */
+
+    localStorage.setItem(
+        PENDING_ROLE_KEY,
+        currentRole
+    );
+
+
+    try{
+
+        const {
+            error
+        } =
+            await supabaseClient
+            .auth
+            .signInWithOAuth({
+
+                provider:
+                    "google",
+
+                options:{
+
+                    /*
+                    Google returns specifically
+                    to career.html.
+                    */
+
+                    redirectTo:
+                        GOOGLE_RETURN_URL,
+
+                    queryParams:{
+
+                        prompt:
+                            "select_account"
+
+                    }
+
+                }
+
+            });
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+    }
+    catch(error){
+
+        googleBtn.disabled =
+            false;
+
+
+        console.error(
+            "GOOGLE LOGIN ERROR:",
+            error
+        );
+
+
+        showMessage(
+            authMessage,
+            error?.message
+            ||
+            "Google sign in failed.",
+            "error"
+        );
+
+    }
+
+}
+
+
+googleBtn.addEventListener(
+    "click",
+    continueWithGoogle
+);
+
+
+/* =========================================================
+   SHOW APPLICATION
+========================================================= */
+
+function showApplicationForm(
+    user
+){
+
+    const email =
+        saveAuthenticatedGmail(
+            user
+        );
+
+
+    if(!email){
+
+        showMessage(
+            authMessage,
+            "Unable to get authenticated Gmail.",
+            "error"
+        );
+
+
+        return;
+
+    }
+
+
+    /*
+    Hide login.
+    */
+
+    authView.style.display =
+        "none";
+
+
+    /*
+    Fill authenticated Gmail.
+    */
+
+    authenticatedEmailText.textContent =
+        email;
+
+
+    applicationEmail.value =
+        email;
+
+
+    applicationEmail.readOnly =
+        true;
+
+
+    applicationRole.textContent =
+        currentRole;
+
+
+    /*
+    Show application.
+    */
+
+    applicationForm.classList.add(
+        "show"
+    );
+
+
+    successView.classList.remove(
+        "show"
+    );
+
+
+    console.log(
+        "APPLICATION ACCESS GRANTED TO:",
+        email
+    );
+
+}
+
+
+/* =========================================================
+   RESTORE GOOGLE LOGIN
+========================================================= */
+
+async function restoreGoogleLogin(){
+
+    try{
+
+        const pendingRole =
+            localStorage.getItem(
+                PENDING_ROLE_KEY
+            );
+
+
+        /*
+        Check real Supabase session.
+        */
+
+        const {
+            data:{
+                session
+            },
+            error
+        } =
+            await supabaseClient
+            .auth
+            .getSession();
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        if(
+            !session ||
+            !session.user ||
+            !session.user.email
+        ){
+
+            return;
+
+        }
+
+
+        /*
+        Store real Gmail.
+        */
+
+        saveAuthenticatedGmail(
+            session.user
+        );
+
+
+        /*
+        Only automatically open form
+        after Google login if a job
+        was waiting.
+        */
+
+        if(
+            pendingRole
+        ){
+
+            currentRole =
+                pendingRole;
+
+
+            selectedRole.textContent =
+                currentRole;
+
+
+            applicationRole.textContent =
+                currentRole;
+
+
+            authOverlay.classList.add(
+                "show"
+            );
+
+
+            document.documentElement.style.overflow =
+                "hidden";
+
+
+            showApplicationForm(
+                session.user
+            );
+
+        }
+
+    }
+    catch(error){
+
+        console.error(
+            "GOOGLE RESTORE ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SUBMIT APPLICATION
+========================================================= */
+
+applicationForm.addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
+
+
+        clearMessage(
+            formMessage
+        );
+
+
+        setButtonLoading(
+            submitApplicationBtn,
+            true,
+            "Submitting...",
+            "Submit Application"
+        );
+
+
+        try{
+
+            /*
+            SECURITY:
+
+            Do not trust localStorage alone.
+
+            Get the REAL Supabase
+            authenticated user again.
+            */
+
+            const {
+                data:{
+                    user
+                },
+                error:userError
+            } =
+                await supabaseClient
+                .auth
+                .getUser();
+
+
+            if(
+                userError ||
+                !user ||
+                !user.email
+            ){
+
+                throw new Error(
+                    "Your authentication session expired. Please authenticate again."
+                );
+
+            }
+
+
+            const authenticatedEmail =
+                saveAuthenticatedGmail(
+                    user
+                );
+
+
+            const fullName =
+                document
+                .getElementById(
+                    "fullName"
+                )
+                .value
+                .trim();
+
+
+            const phone =
+                document
+                .getElementById(
+                    "phone"
+                )
+                .value
+                .trim();
+
+
+            const location =
+                document
+                .getElementById(
+                    "location"
+                )
+                .value
+                .trim();
+
+
+            const experience =
+                document
+                .getElementById(
+                    "experience"
+                )
+                .value
+                .trim();
+
+
+            const qualification =
+                document
+                .getElementById(
+                    "qualification"
+                )
+                .value
+                .trim();
+
+
+            const portfolio =
+                document
+                .getElementById(
+                    "portfolio"
+                )
+                .value
+                .trim();
+
+
+            const applicationMessage =
+                document
+                .getElementById(
+                    "applicationMessage"
+                )
+                .value
+                .trim();
+
+
+            if(
+                !fullName ||
+                !phone
+            ){
+
+                throw new Error(
+                    "Please enter your name and phone number."
+                );
+
+            }
+
+
+            console.log(
+                "SUBMITTING APPLICATION:",
+                {
+                    fullName,
+                    authenticatedEmail,
+                    phone,
+                    role:currentRole,
+                    location,
+                    experience,
+                    qualification,
+                    portfolio
+                }
+            );
+
+
+            /*
+            =====================================
+            OPTIONAL DATABASE INSERT
+
+            If you created a table called
+            career_applications,
+            uncomment this section.
+            =====================================
+
+
+            const {
+                error:insertError
+            } =
+                await supabaseClient
+                .from(
+                    "career_applications"
+                )
+                .insert({
+
+                    user_id:
+                        user.id,
+
+                    full_name:
+                        fullName,
+
+                    email:
+                        authenticatedEmail,
+
+                    phone:
+                        phone,
+
+                    job_role:
+                        currentRole,
+
+                    location:
+                        location,
+
+                    experience:
+                        experience,
+
+                    qualification:
+                        qualification,
+
+                    portfolio_url:
+                        portfolio,
+
+                    cover_message:
+                        applicationMessage,
+
+                    status:
+                        "submitted"
+
+                });
+
+
+            if(insertError){
+
+                throw insertError;
+
+            }
+
+            */
+
+
+            /*
+            =====================================
+            SEND APPLICATION SUCCESS EMAIL
+            =====================================
+            */
+
+
+            const {
+                data:emailData,
+                error:emailError
+            } =
+                await supabaseClient
+                .functions
+                .invoke(
+
+                    APPLICATION_EMAIL_FUNCTION,
+
+                    {
+
+                        body:{
+
+                            name:
+                                fullName,
+
+                            /*
+                            IMPORTANT:
+                            Send to REAL authenticated
+                            Gmail, not typed email.
+                            */
+
+                            email:
+                                authenticatedEmail,
+
+                            jobRole:
+                                currentRole,
+
+                            phone:
+                                phone,
+
+                            location:
+                                location,
+
+                            experience:
+                                experience,
+
+                            qualification:
+                                qualification,
+
+                            portfolio:
+                                portfolio,
+
+                            message:
+                                applicationMessage
+
+                        }
+
+                    }
+
+                );
+
+
+            if(emailError){
+
+                console.error(
+                    "EMAIL FUNCTION ERROR:",
+                    emailError
+                );
+
+
+                throw new Error(
+                    "Application could not send the confirmation email."
+                );
+
+            }
+
+
+            console.log(
+                "CONFIRMATION EMAIL:",
+                emailData
+            );
+
+
+            console.log(
+                "APPLICATION SUBMITTED BY:",
+                authenticatedEmail
+            );
+
+
+            /*
+            Show success.
+            */
+
+            applicationForm.classList.remove(
+                "show"
+            );
+
+
+            successView.classList.add(
+                "show"
+            );
+
+
+            localStorage.removeItem(
+                PENDING_ROLE_KEY
+            );
+
+        }
+        catch(error){
+
+            console.error(
+                "APPLICATION ERROR:",
+                error
+            );
+
+
+            showMessage(
+                formMessage,
+                error?.message
+                ||
+                "Unable to submit application.",
+                "error"
+            );
+
+        }
+        finally{
+
+            setButtonLoading(
+                submitApplicationBtn,
+                false,
+                "Submitting...",
+                "Submit Application"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   AUTH STATE DEBUG
+========================================================= */
+
+supabaseClient
+.auth
+.onAuthStateChange(
+    function(
+        event,
+        session
+    ){
+
+        console.log(
+            "SUPABASE AUTH EVENT:",
+            event
+        );
+
+
+        if(
+            session &&
+            session.user &&
+            session.user.email
+        ){
+
+            saveAuthenticatedGmail(
+                session.user
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+console.log(
+    "CURRENT AUTHENTICATED GMAIL:",
+    localStorage.getItem(
+        AUTH_GMAIL_KEY
+    )
+);
+
+
+/*
+After Google returns,
+restore selected job + application.
+*/
+
+restoreGoogleLogin();
+
+</script>
+
+
+</body>
+</html>
