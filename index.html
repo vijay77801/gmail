@@ -810,6 +810,976 @@ select{
 
 }
 
+
+/* Google-inspired OTP verification UI */
+#authView.otp-mode .auth-head,#authView.otp-mode .auth-email-step,#authView.otp-mode .auth-google-step{display:none}.auth-modal{max-width:450px}.auth-email-step{}.otp-google-card{display:none;text-align:center}#authView.otp-mode .otp-google-card{display:block}.otp-google-icon{width:52px;height:52px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;background:#f1f3f4;color:#1a73e8;font-size:24px}.otp-title{font-size:24px;font-weight:500;color:#202124}.otp-subtitle{margin:10px auto 15px;color:#5f6368;font-size:14px;line-height:1.5}.otp-email-chip{display:inline-block;margin-bottom:25px;padding:7px 13px;border:1px solid #dadce0;border-radius:20px;font-size:13px;color:#3c4043}.otp-area{border:0;margin-top:0;padding-top:0}.otp-boxes{display:flex;justify-content:center;gap:8px;margin:5px 0 14px}.otp-box{width:48px;height:54px;border:1px solid #dadce0;border-radius:8px;outline:none;text-align:center;font-size:22px;color:#202124}.otp-box:focus{border:2px solid #1a73e8}.otp-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px}.text-btn{border:0;background:none;color:#1a73e8;font-size:13px;font-weight:600;cursor:pointer}.otp-verify-google{width:auto;min-width:100px;min-height:42px;margin:0;padding:0 18px;background:#1a73e8;border-radius:4px}.google-btn,.dark-btn{border-radius:4px}.dark-btn{background:#1a73e8}.dark-btn:hover:not(:disabled){background:#1769d2}@media(max-width:520px){.otp-box{width:41px;height:49px}.otp-boxes{gap:5px}}
+
+
+/* =========================================================
+   DESKTOP FULL-SCREEN SPLIT AUTH / APPLICATION
+   Mobile layout below 700px stays unchanged.
+========================================================= */
+
+.desktop-auth-brand{
+    display:none;
+}
+
+.auth-workspace{
+    width:100%;
+}
+
+@media (min-width:701px){
+
+    .auth-overlay{
+        padding:0;
+        align-items:stretch;
+        justify-content:stretch;
+        background:#fff;
+        backdrop-filter:none;
+        -webkit-backdrop-filter:none;
+    }
+
+    .auth-modal{
+        width:100vw;
+        max-width:none;
+        height:100vh;
+        max-height:none;
+        padding:0;
+        overflow:hidden;
+        display:grid;
+        grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+        border:0;
+        border-radius:0;
+        box-shadow:none;
+        background:#fff;
+    }
+
+    .desktop-auth-brand{
+        position:relative;
+        display:flex;
+        min-width:0;
+        height:100vh;
+        padding:54px 58px;
+        flex-direction:column;
+        justify-content:space-between;
+        overflow:hidden;
+        background:
+            radial-gradient(circle at 78% 18%, rgba(255,255,255,.20), transparent 26%),
+            linear-gradient(145deg,#0b0b0c 0%,#15161a 52%,#22242b 100%);
+        color:#fff;
+    }
+
+    .desktop-auth-brand::before{
+        content:"";
+        position:absolute;
+        width:340px;
+        height:340px;
+        right:-110px;
+        bottom:-90px;
+        border:1px solid rgba(255,255,255,.12);
+        border-radius:50%;
+        box-shadow:0 0 0 70px rgba(255,255,255,.025),0 0 0 140px rgba(255,255,255,.018);
+    }
+
+    .desktop-brand-top{
+        position:relative;
+        z-index:1;
+        display:flex;
+        align-items:center;
+        gap:14px;
+    }
+
+    .desktop-brand-mark{
+        width:42px;
+        height:42px;
+        display:grid;
+        place-items:center;
+        border:1px solid rgba(255,255,255,.18);
+        border-radius:12px;
+        background:rgba(255,255,255,.08);
+        font-size:18px;
+        font-weight:800;
+    }
+
+    .desktop-brand-name{
+        font-size:17px;
+        font-weight:700;
+        letter-spacing:-.3px;
+    }
+
+    .desktop-brand-private{
+        margin-top:3px;
+        color:rgba(255,255,255,.52);
+        font-size:9px;
+        font-weight:700;
+        letter-spacing:2px;
+        text-transform:uppercase;
+    }
+
+    .desktop-brand-copy{
+        position:relative;
+        z-index:1;
+        max-width:520px;
+    }
+
+    .desktop-brand-copy span{
+        display:block;
+        margin-bottom:18px;
+        color:rgba(255,255,255,.48);
+        font-size:10px;
+        font-weight:800;
+        letter-spacing:3px;
+    }
+
+    .desktop-brand-copy h2{
+        max-width:470px;
+        font-size:clamp(42px,5vw,72px);
+        font-weight:600;
+        line-height:.98;
+        letter-spacing:-3px;
+    }
+
+    .desktop-brand-copy p{
+        max-width:480px;
+        margin-top:24px;
+        color:rgba(255,255,255,.60);
+        font-size:14px;
+        line-height:1.75;
+    }
+
+    .desktop-brand-footer{
+        position:relative;
+        z-index:1;
+        color:rgba(255,255,255,.38);
+        font-size:11px;
+        line-height:1.6;
+    }
+
+    .auth-workspace{
+        position:relative;
+        width:100%;
+        height:100vh;
+        overflow-y:auto;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:64px clamp(42px,6vw,92px);
+        background:#fff;
+    }
+
+    .auth-workspace > #authView,
+    .auth-workspace > #applicationForm,
+    .auth-workspace > #successView{
+        width:100%;
+        max-width:520px;
+        margin:auto;
+    }
+
+    .auth-workspace > #applicationForm{
+        max-width:560px;
+        padding:8px 0 48px;
+    }
+
+    .close-btn{
+        position:fixed;
+        top:24px;
+        right:28px;
+        z-index:10;
+        width:40px;
+        height:40px;
+        border-color:#e4e7ec;
+        box-shadow:0 4px 18px rgba(17,24,39,.06);
+    }
+
+    .auth-head h2{
+        font-size:30px;
+        letter-spacing:-1.15px;
+    }
+
+    .auth-head p{
+        max-width:430px;
+        font-size:13.5px;
+    }
+
+    .input{
+        height:54px;
+    }
+
+    .main-btn,
+    .google-btn{
+        min-height:54px;
+    }
+
+    .otp-google-card{
+        padding-top:12px;
+    }
+
+    .otp-title{
+        font-size:28px;
+    }
+
+    .success-view{
+        padding:40px 0;
+    }
+}
+
+
+
+/* =========================================================
+   CLEAN DESKTOP SPLIT UI OVERRIDES
+   Desktop only — mobile remains unchanged
+========================================================= */
+@media (min-width:701px){
+
+    .auth-overlay{
+        background:#ffffff;
+    }
+
+    .auth-modal{
+        grid-template-columns:48% 52%;
+        background:#ffffff;
+    }
+
+    .desktop-auth-brand{
+        padding:56px 64px;
+        background:#f5f6f8;
+        color:#111827;
+        border-right:1px solid #e7e9ed;
+    }
+
+    .desktop-auth-brand::before{
+        display:none;
+    }
+
+    .desktop-brand-top{
+        gap:12px;
+    }
+
+    .desktop-brand-mark{
+        width:40px;
+        height:40px;
+        border:1px solid #d9dde3;
+        border-radius:10px;
+        background:#ffffff;
+        color:#111827;
+        box-shadow:0 2px 8px rgba(15,23,42,.04);
+        font-size:16px;
+    }
+
+    .desktop-brand-name{
+        color:#111827;
+        font-size:17px;
+        font-weight:700;
+        letter-spacing:-.25px;
+    }
+
+    .desktop-brand-private{
+        color:#8b9099;
+        font-size:8.5px;
+        letter-spacing:1.8px;
+    }
+
+    .desktop-brand-copy{
+        max-width:500px;
+    }
+
+    .desktop-brand-copy span{
+        margin-bottom:16px;
+        color:#8a9099;
+        font-size:10px;
+        letter-spacing:2.4px;
+    }
+
+    .desktop-brand-copy h2{
+        max-width:460px;
+        color:#111827;
+        font-size:clamp(42px,4.7vw,66px);
+        font-weight:600;
+        line-height:1.02;
+        letter-spacing:-3px;
+    }
+
+    .desktop-brand-copy p{
+        max-width:455px;
+        margin-top:22px;
+        color:#6b7280;
+        font-size:14px;
+        line-height:1.72;
+    }
+
+    .desktop-brand-footer{
+        color:#9aa0a8;
+        font-size:11px;
+        line-height:1.55;
+    }
+
+    .auth-workspace{
+        padding:60px clamp(54px,6vw,92px);
+        background:#ffffff;
+    }
+
+    .auth-workspace > #authView,
+    .auth-workspace > #applicationForm,
+    .auth-workspace > #successView{
+        max-width:470px;
+    }
+
+    .auth-workspace > #applicationForm{
+        max-width:520px;
+        padding:18px 0 50px;
+    }
+
+    .close-btn{
+        top:24px;
+        right:28px;
+        width:38px;
+        height:38px;
+        border:1px solid #e6e8ec;
+        background:#ffffff;
+        color:#6b7280;
+        box-shadow:none;
+        transition:.18s ease;
+    }
+
+    .close-btn:hover{
+        background:#f7f8fa;
+        color:#111827;
+    }
+
+    .auth-head{
+        margin-bottom:28px;
+    }
+
+    .auth-head h2{
+        color:#111827;
+        font-size:30px;
+        font-weight:650;
+        letter-spacing:-1px;
+    }
+
+    .auth-head p{
+        margin-top:10px;
+        color:#727780;
+        font-size:13.5px;
+        line-height:1.6;
+    }
+
+    .selected-role{
+        margin-top:14px;
+        padding:7px 11px;
+        border:1px solid #e6e8ec;
+        background:#fafafa;
+        color:#4b5563;
+        font-size:10.5px;
+    }
+
+    .label{
+        color:#374151;
+        font-size:12px;
+        font-weight:650;
+    }
+
+    .input,
+    .textarea{
+        border:1px solid #dfe3e8;
+        border-radius:10px;
+        background:#ffffff;
+        color:#111827;
+        box-shadow:none;
+    }
+
+    .input{
+        height:52px;
+    }
+
+    .input:focus,
+    .textarea:focus{
+        border-color:#8a94a3;
+        box-shadow:0 0 0 3px rgba(17,24,39,.045);
+    }
+
+    .main-btn{
+        min-height:50px;
+        border-radius:10px;
+    }
+
+    .dark-btn{
+        background:#111827;
+        color:#ffffff;
+    }
+
+    .dark-btn:hover:not(:disabled){
+        background:#1f2937;
+    }
+
+    .google-btn{
+        min-height:50px;
+        border:1px solid #dfe3e8;
+        border-radius:10px;
+        background:#ffffff;
+        color:#202124;
+    }
+
+    .google-btn:hover{
+        background:#f8f9fa;
+    }
+
+    .divider{
+        margin:22px 0;
+        color:#a1a6ae;
+    }
+
+    .divider:before,
+    .divider:after{
+        background:#eceef1;
+    }
+
+    .otp-google-card{
+        padding-top:4px;
+    }
+
+    .otp-google-icon{
+        width:48px;
+        height:48px;
+        margin-bottom:18px;
+        border:1px solid #e4e7eb;
+        background:#ffffff;
+        color:#1a73e8;
+        box-shadow:0 2px 10px rgba(15,23,42,.04);
+    }
+
+    .otp-title{
+        color:#202124;
+        font-size:28px;
+        font-weight:500;
+        letter-spacing:-.7px;
+    }
+
+    .otp-subtitle{
+        max-width:390px;
+        color:#687078;
+    }
+
+    .otp-email-chip{
+        border:1px solid #dfe3e8;
+        background:#fafafa;
+        color:#3c4043;
+    }
+
+    .otp-box{
+        width:50px;
+        height:54px;
+        border:1px solid #d9dde3;
+        border-radius:9px;
+        background:#ffffff;
+        box-shadow:none;
+    }
+
+    .otp-box:focus{
+        border:2px solid #1a73e8;
+        box-shadow:none;
+    }
+
+    .otp-verify-google{
+        min-width:105px;
+        min-height:42px;
+        border-radius:8px;
+        background:#1a73e8;
+    }
+
+    .authenticated-email{
+        border:1px solid #e1e6e3;
+        border-radius:10px;
+        background:#f7faf8;
+    }
+
+    .form-field{
+        margin-top:15px;
+    }
+
+    .success-view{
+        padding:30px 0;
+    }
+
+    .success-icon{
+        width:58px;
+        height:58px;
+        background:#f2f8f4;
+        color:#18794e;
+        border:1px solid #dfeee4;
+    }
+}
+
+
+
+/* =========================================================
+   UNIQUE CLEAN UI — DESKTOP
+   Keeps existing functionality + mobile behavior
+========================================================= */
+@media (min-width:701px){
+
+    .auth-overlay{
+        background:#f7f7f5;
+        align-items:stretch;
+        justify-content:stretch;
+        padding:0;
+    }
+
+    .auth-modal{
+        width:100vw;
+        max-width:none;
+        height:100vh;
+        max-height:none;
+        border:none;
+        border-radius:0;
+        overflow:hidden;
+        box-shadow:none;
+        display:grid;
+        grid-template-columns:minmax(420px,44%) 1fr;
+        background:#fff;
+    }
+
+    .desktop-auth-brand{
+        position:relative;
+        padding:54px 58px 44px;
+        background:
+            linear-gradient(rgba(17,24,39,.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(17,24,39,.035) 1px, transparent 1px),
+            #f2f3ef;
+        background-size:38px 38px;
+        color:#111827;
+        border-right:1px solid #e4e7df;
+        overflow:hidden;
+    }
+
+    .desktop-auth-brand::after{
+        content:"";
+        position:absolute;
+        width:250px;
+        height:250px;
+        right:-85px;
+        bottom:-85px;
+        border:1px solid rgba(17,24,39,.08);
+        border-radius:50%;
+        box-shadow:
+            0 0 0 34px rgba(17,24,39,.018),
+            0 0 0 68px rgba(17,24,39,.012);
+    }
+
+    .desktop-brand-top{
+        position:relative;
+        z-index:2;
+        display:flex;
+        align-items:center;
+        gap:12px;
+    }
+
+    .desktop-brand-mark{
+        width:42px;
+        height:42px;
+        border-radius:12px;
+        border:1px solid #d8ddd2;
+        background:#fff;
+        color:#111827;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:15px;
+        font-weight:800;
+        box-shadow:0 6px 20px rgba(15,23,42,.05);
+    }
+
+    .desktop-brand-name{
+        font-size:18px;
+        font-weight:750;
+        color:#111827;
+        letter-spacing:-.35px;
+    }
+
+    .desktop-brand-private{
+        margin-top:2px;
+        font-size:8px;
+        letter-spacing:2.1px;
+        color:#8b9188;
+    }
+
+    .desktop-brand-copy{
+        position:relative;
+        z-index:2;
+        max-width:520px;
+        margin-top:16vh;
+    }
+
+    .desktop-brand-copy span{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        margin-bottom:20px;
+        color:#6f776e;
+        font-size:10px;
+        font-weight:800;
+        letter-spacing:2.5px;
+        text-transform:uppercase;
+    }
+
+    .desktop-brand-copy span::before{
+        content:"";
+        width:28px;
+        height:1px;
+        background:#9ca49b;
+    }
+
+    .desktop-brand-copy h2{
+        max-width:500px;
+        color:#111827;
+        font-size:clamp(44px,5vw,72px);
+        font-weight:620;
+        line-height:.98;
+        letter-spacing:-3.7px;
+    }
+
+    .desktop-brand-copy p{
+        max-width:440px;
+        margin-top:24px;
+        color:#666d66;
+        font-size:14px;
+        line-height:1.78;
+    }
+
+    .desktop-brand-footer{
+        position:absolute;
+        left:58px;
+        bottom:42px;
+        z-index:2;
+        color:#979d96;
+        font-size:10.5px;
+        letter-spacing:.2px;
+    }
+
+    .auth-workspace{
+        position:relative;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        overflow-y:auto;
+        padding:64px 72px;
+        background:#fff;
+    }
+
+    .auth-workspace::before{
+        content:"APPLICATION ACCESS";
+        position:absolute;
+        top:32px;
+        left:42px;
+        color:#b3b7bd;
+        font-size:9px;
+        font-weight:800;
+        letter-spacing:2.2px;
+    }
+
+    .auth-workspace > #authView,
+    .auth-workspace > #applicationForm,
+    .auth-workspace > #successView{
+        width:min(100%,480px);
+        max-width:480px;
+    }
+
+    .auth-workspace > #applicationForm{
+        width:min(100%,540px);
+        max-width:540px;
+        padding:36px 0 60px;
+    }
+
+    .close-btn{
+        top:26px;
+        right:30px;
+        width:38px;
+        height:38px;
+        border-radius:10px;
+        border:1px solid #e6e8eb;
+        background:#fff;
+        color:#73777e;
+        box-shadow:none;
+        font-size:18px;
+    }
+
+    .close-btn:hover{
+        background:#f6f7f7;
+        color:#111827;
+    }
+
+    .auth-head{
+        padding-right:0;
+        margin-bottom:30px;
+    }
+
+    .auth-head h2{
+        font-size:32px;
+        font-weight:650;
+        letter-spacing:-1.35px;
+        color:#111827;
+    }
+
+    .auth-head p{
+        margin-top:10px;
+        color:#747982;
+        font-size:13.5px;
+        line-height:1.65;
+    }
+
+    .selected-role{
+        margin-top:16px;
+        padding:8px 11px;
+        border:1px solid #e4e6e9;
+        border-radius:8px;
+        background:#fafafa;
+        color:#4f5660;
+        font-size:10px;
+        letter-spacing:.2px;
+    }
+
+    .label{
+        color:#3f4650;
+        font-size:11.5px;
+        font-weight:700;
+    }
+
+    .input,
+    .textarea{
+        border:1px solid #dfe2e6;
+        border-radius:9px;
+        background:#fff;
+        color:#111827;
+        box-shadow:none;
+        transition:border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .input{
+        height:52px;
+        padding:0 15px;
+    }
+
+    .textarea{
+        min-height:110px;
+        padding:14px 15px;
+    }
+
+    .input:focus,
+    .textarea:focus{
+        border-color:#8c949f;
+        box-shadow:0 0 0 3px rgba(17,24,39,.045);
+    }
+
+    .main-btn,
+    .google-btn{
+        min-height:50px;
+        border-radius:9px;
+        font-weight:700;
+    }
+
+    .dark-btn{
+        background:#111827;
+        color:#fff;
+        box-shadow:0 8px 22px rgba(17,24,39,.12);
+    }
+
+    .dark-btn:hover:not(:disabled){
+        background:#202938;
+        transform:translateY(-1px);
+    }
+
+    .google-btn{
+        border:1px solid #dfe2e6;
+        background:#fff;
+        color:#202124;
+        box-shadow:none;
+    }
+
+    .google-btn:hover{
+        background:#f8f9fa;
+    }
+
+    .divider{
+        margin:24px 0;
+        color:#b0b4ba;
+        font-size:9px;
+        letter-spacing:1.6px;
+    }
+
+    .divider:before,
+    .divider:after{
+        background:#eceef1;
+    }
+
+    .otp-google-card{
+        padding-top:2px;
+    }
+
+    .otp-google-icon{
+        width:52px;
+        height:52px;
+        margin-bottom:20px;
+        border-radius:14px;
+        border:1px solid #e2e5e9;
+        background:#fff;
+        box-shadow:0 8px 22px rgba(15,23,42,.06);
+    }
+
+    .otp-title{
+        font-size:30px;
+        font-weight:520;
+        letter-spacing:-1px;
+        color:#202124;
+    }
+
+    .otp-subtitle{
+        max-width:400px;
+        margin-top:10px;
+        color:#6f757d;
+        line-height:1.65;
+    }
+
+    .otp-email-chip{
+        margin-top:17px;
+        border:1px solid #e0e3e6;
+        border-radius:999px;
+        background:#fafafa;
+        color:#3c4043;
+    }
+
+    .otp-code-row{
+        gap:10px;
+        margin-top:24px;
+    }
+
+    .otp-box{
+        width:52px;
+        height:56px;
+        border:1px solid #d7dbe0;
+        border-radius:10px;
+        background:#fff;
+        font-size:22px;
+        box-shadow:none;
+    }
+
+    .otp-box:focus{
+        border:2px solid #1a73e8;
+        box-shadow:0 0 0 3px rgba(26,115,232,.08);
+    }
+
+    .otp-actions{
+        margin-top:22px;
+    }
+
+    .otp-verify-google{
+        min-width:112px;
+        min-height:43px;
+        border-radius:8px;
+        background:#1a73e8;
+        box-shadow:0 7px 18px rgba(26,115,232,.16);
+    }
+
+    .otp-verify-google:hover{
+        background:#1769cf;
+    }
+
+    .authenticated-email{
+        border:1px solid #e0e7e2;
+        border-radius:9px;
+        background:#f8faf8;
+        color:#627069;
+    }
+
+    .authenticated-email strong{
+        color:#233129;
+    }
+
+    .form-field{
+        margin-top:16px;
+    }
+
+    .message{
+        border-radius:9px;
+    }
+
+    .success-view{
+        padding:36px 0;
+    }
+
+    .success-icon{
+        width:60px;
+        height:60px;
+        border:1px solid #dbeadf;
+        background:#f2f8f4;
+        color:#18794e;
+        box-shadow:none;
+    }
+}
+
+
+
+/* =========================================================
+   LAPTOP-ONLY FINAL ADJUSTMENTS
+   - No boxed C mark: use your own image
+   - Fix left-bottom text overlap
+   - Mobile remains unchanged
+========================================================= */
+@media (min-width:701px){
+
+    .desktop-brand-mark{
+        width:auto !important;
+        height:auto !important;
+        min-width:0 !important;
+        min-height:0 !important;
+        padding:0 !important;
+        border:none !important;
+        border-radius:0 !important;
+        background:transparent !important;
+        box-shadow:none !important;
+        color:transparent !important;
+        font-size:0 !important;
+        overflow:visible !important;
+    }
+
+    .desktop-brand-mark::before{
+        content:"";
+        display:block;
+        width:46px;
+        height:46px;
+        background-image:url("your-logo.png");
+        background-size:contain;
+        background-position:center;
+        background-repeat:no-repeat;
+    }
+
+    .desktop-auth-brand{
+        display:flex !important;
+        flex-direction:column !important;
+        min-height:100vh !important;
+        padding-bottom:52px !important;
+    }
+
+    .desktop-brand-copy{
+        margin-top:14vh !important;
+        margin-bottom:40px !important;
+    }
+
+    .desktop-brand-footer{
+        position:static !important;
+        margin-top:auto !important;
+        padding-top:24px !important;
+        max-width:460px !important;
+        line-height:1.65 !important;
+        white-space:normal !important;
+    }
+
+    .desktop-brand-footer,
+    .desktop-brand-footer *{
+        overflow-wrap:anywhere !important;
+        word-break:normal !important;
+    }
+}
+
 </style>
 </head>
 
@@ -1054,6 +2024,28 @@ select{
 
     <div class="auth-modal">
 
+        <aside class="desktop-auth-brand" aria-hidden="true">
+            <div class="desktop-brand-top">
+                <div class="desktop-brand-mark" aria-label="Company logo"></div>
+                <div>
+                    <div class="desktop-brand-name">Cezonal Solutions</div>
+                    <div class="desktop-brand-private">Private Limited</div>
+                </div>
+            </div>
+
+            <div class="desktop-brand-copy">
+                <span>CAREERS</span>
+                <h2>Build what comes next.</h2>
+                <p>Join our team and create thoughtful products, digital experiences and technology for everyday life.</p>
+            </div>
+
+            <div class="desktop-brand-footer">
+                Secure application access<br>
+                Email OTP or Google
+            </div>
+        </aside>
+
+        <div class="auth-workspace">
 
         <button
             class="close-btn"
@@ -1092,6 +2084,7 @@ select{
             </div>
 
 
+            <div class="auth-email-step">
             <label
                 class="label"
                 for="authEmail"
@@ -1118,7 +2111,10 @@ select{
             </button>
 
 
+            </div>
+
             <!-- OTP -->
+            <div class="otp-google-card"><div class="otp-google-icon">✉</div><h3 class="otp-title">Verify your email</h3><p class="otp-subtitle">Enter the 6-digit verification code sent to</p><div class="otp-email-chip" id="otpEmailChip"></div></div>
 
             <div
                 class="otp-area"
@@ -1133,15 +2129,7 @@ select{
                 </label>
 
 
-                <input
-                    class="input otp-input"
-                    id="otpInput"
-                    type="text"
-                    inputmode="numeric"
-                    maxlength="6"
-                    autocomplete="one-time-code"
-                    placeholder="------"
-                >
+                <input id="otpInput" type="hidden"><div class="otp-boxes" id="otpBoxes"><input class="otp-box" inputmode="numeric" maxlength="1"><input class="otp-box" inputmode="numeric" maxlength="1"><input class="otp-box" inputmode="numeric" maxlength="1"><input class="otp-box" inputmode="numeric" maxlength="1"><input class="otp-box" inputmode="numeric" maxlength="1"><input class="otp-box" inputmode="numeric" maxlength="1"></div>
 
 
                 <div class="helper">
@@ -1152,18 +2140,18 @@ select{
                 </div>
 
 
-                <button
-                    class="main-btn dark-btn"
+                <div class="otp-actions"><button class="text-btn" id="changeEmailBtn" type="button">Use another email</button><button
+                    class="main-btn dark-btn otp-verify-google"
                     id="verifyOtpBtn"
                     type="button"
                 >
-                    Verify OTP
-                </button>
+                    Verify
+                </button></div>
 
             </div>
 
 
-            <div class="divider">
+            <div class="auth-google-step"><div class="divider">
                 or
             </div>
 
@@ -1205,7 +2193,7 @@ select{
 
                 Continue with Google
 
-            </button>
+            </button></div>
 
 
             <div
@@ -1462,11 +2450,13 @@ select{
 
             <p>
                 Your application has been
-                submitted successfully.
-                A confirmation email will
-                be sent to your authenticated
+                saved successfully.
+                A confirmation email has been
+                sent to your authenticated
                 Gmail.
             </p>
+
+        </div>
 
         </div>
 
@@ -1603,6 +2593,9 @@ const otpArea =
     document.getElementById(
         "otpArea"
     );
+const otpBoxes=Array.from(document.querySelectorAll(".otp-box"));
+const otpEmailChip=document.getElementById("otpEmailChip");
+const changeEmailBtn=document.getElementById("changeEmailBtn");
 
 
 const sendOtpBtn =
@@ -1883,8 +2876,8 @@ async function openApplyModal(
         currentRole;
 
 
-    authView.style.display =
-        "block";
+    authView.style.display="block";
+    authView.classList.remove("otp-mode"); otpArea.classList.remove("show");
 
 
     applicationForm.classList.remove(
@@ -2112,9 +3105,10 @@ async function sendOtp(){
         }
 
 
-        otpArea.classList.add(
-            "show"
-        );
+        otpArea.classList.add("show");
+        authView.classList.add("otp-mode");
+        otpEmailChip.textContent=email;
+        otpBoxes.forEach(b=>b.value=""); otpInput.value="";
 
 
         showMessage(
@@ -2123,7 +3117,7 @@ async function sendOtp(){
         );
 
 
-        otpInput.focus();
+        otpBoxes[0]?.focus();
 
     }
     catch(error){
@@ -2301,71 +3295,11 @@ async function verifyOtp(){
 /* =========================================================
    OTP EVENTS
 ========================================================= */
-
-sendOtpBtn.addEventListener(
-    "click",
-    sendOtp
-);
-
-
-verifyOtpBtn.addEventListener(
-    "click",
-    verifyOtp
-);
-
-
-otpInput.addEventListener(
-    "input",
-    function(){
-
-        this.value =
-            this.value
-            .replace(
-                /\D/g,
-                ""
-            )
-            .slice(
-                0,
-                6
-            );
-
-    }
-);
-
-
-otpInput.addEventListener(
-    "keydown",
-    function(event){
-
-        if(
-            event.key ===
-            "Enter"
-        ){
-
-            verifyOtp();
-
-        }
-
-    }
-);
-
-
-authEmail.addEventListener(
-    "keydown",
-    function(event){
-
-        if(
-            event.key ===
-            "Enter"
-        ){
-
-            sendOtp();
-
-        }
-
-    }
-);
-
+sendOtpBtn.addEventListener("click",sendOtp); verifyOtpBtn.addEventListener("click",verifyOtp);
+function syncOtp(){otpInput.value=otpBoxes.map(b=>b.value).join("");}
+otpBoxes.forEach((box,i)=>{box.addEventListener("input",function(){this.value=this.value.replace(/\D/g,"").slice(0,1);syncOtp();if(this.value&&i<5)otpBoxes[i+1].focus();});box.addEventListener("keydown",e=>{if(e.key==="Backspace"&&!box.value&&i>0)otpBoxes[i-1].focus();if(e.key==="Enter")verifyOtp();});box.addEventListener("paste",e=>{const d=e.clipboardData.getData("text").replace(/\D/g,"").slice(0,6);if(!d)return;e.preventDefault();d.split("").forEach((v,j)=>{if(otpBoxes[j])otpBoxes[j].value=v});syncOtp();otpBoxes[Math.min(d.length,6)-1]?.focus();});});
+changeEmailBtn.addEventListener("click",()=>{authView.classList.remove("otp-mode");otpArea.classList.remove("show");otpInput.value="";otpBoxes.forEach(b=>b.value="");clearMessage(authMessage);authEmail.focus();});
+authEmail.addEventListener("keydown",e=>{if(e.key==="Enter")sendOtp();});
 
 /* =========================================================
    GOOGLE LOGIN
@@ -2836,15 +3770,12 @@ applicationForm.addEventListener(
 
             /*
             =====================================
-            OPTIONAL DATABASE INSERT
-
-            If you created a table called
-            career_applications,
-            uncomment this section.
+            STORE APPLICATION IN DATABASE FIRST
             =====================================
-
+            */
 
             const {
+                data:applicationRow,
                 error:insertError
             } =
                 await supabaseClient
@@ -2869,33 +3800,56 @@ applicationForm.addEventListener(
                         currentRole,
 
                     location:
-                        location,
+                        location || null,
 
                     experience:
-                        experience,
+                        experience || null,
 
                     qualification:
-                        qualification,
+                        qualification || null,
 
                     portfolio_url:
-                        portfolio,
+                        portfolio || null,
 
                     cover_message:
-                        applicationMessage,
+                        applicationMessage || null,
+
+                    auth_provider:
+                        user.app_metadata?.provider
+                        ||
+                        "email",
 
                     status:
-                        "submitted"
+                        "submitted",
 
-                });
+                    email_status:
+                        "pending"
+
+                })
+                .select()
+                .single();
 
 
             if(insertError){
 
-                throw insertError;
+                console.error(
+                    "DATABASE INSERT ERROR:",
+                    insertError
+                );
+
+                throw new Error(
+                    insertError.message
+                    ||
+                    "Unable to save application in database."
+                );
 
             }
 
-            */
+
+            console.log(
+                "APPLICATION STORED IN DATABASE:",
+                applicationRow
+            );
 
 
             /*
@@ -2950,7 +3904,12 @@ applicationForm.addEventListener(
                                 portfolio,
 
                             message:
-                                applicationMessage
+                                applicationMessage,
+
+                            applicationId:
+                                applicationRow?.id
+                                ||
+                                null
 
                         }
 
@@ -2967,8 +3926,35 @@ applicationForm.addEventListener(
                 );
 
 
+                /*
+                Application is already saved.
+                Mark confirmation email as failed.
+                */
+
+                if(
+                    applicationRow?.id
+                ){
+
+                    await supabaseClient
+                    .from(
+                        "career_applications"
+                    )
+                    .update({
+
+                        email_status:
+                            "failed"
+
+                    })
+                    .eq(
+                        "id",
+                        applicationRow.id
+                    );
+
+                }
+
+
                 throw new Error(
-                    "Application could not send the confirmation email."
+                    "Application was saved, but confirmation email could not be sent."
                 );
 
             }
@@ -2978,6 +3964,51 @@ applicationForm.addEventListener(
                 "CONFIRMATION EMAIL:",
                 emailData
             );
+
+
+            /*
+            =====================================
+            MARK CONFIRMATION EMAIL AS SENT
+            =====================================
+            */
+
+            if(
+                applicationRow?.id
+            ){
+
+                const {
+                    error:emailStatusError
+                } =
+                    await supabaseClient
+                    .from(
+                        "career_applications"
+                    )
+                    .update({
+
+                        email_status:
+                            "sent",
+
+                        confirmation_email_sent_at:
+                            new Date()
+                            .toISOString()
+
+                    })
+                    .eq(
+                        "id",
+                        applicationRow.id
+                    );
+
+
+                if(emailStatusError){
+
+                    console.warn(
+                        "EMAIL STATUS UPDATE ERROR:",
+                        emailStatusError
+                    );
+
+                }
+
+            }
 
 
             console.log(
