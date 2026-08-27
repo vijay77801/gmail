@@ -1,1911 +1,1028 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
->
-
-<title>
-Cezonal Careers Admin
-</title>
-
-
-<script
-src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-</script>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cezonal Careers Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f6f7f8;
+  --card:#fff;
+  --text:#111827;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --soft:#f8f9fa;
+  --black:#111827;
+  --green:#18794e;
+  --green-bg:#eff8f3;
+  --red:#b42318;
+  --red-bg:#fff4f2;
+  --amber:#9a6700;
+  --amber-bg:#fff8e6;
 }
-
 body{
+  min-height:100vh;
+  font-family:Inter,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
 
-    min-height:100vh;
-
-    font-family:
-        Inter,
-        Arial,
-        sans-serif;
-
-    background:#f6f7f8;
-
-    color:#111827;
+.topbar{
+  position:sticky;top:0;z-index:50;
+  height:70px;
+  display:flex;align-items:center;
+  background:rgba(255,255,255,.94);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(12px);
+}
+.topbar-inner{
+  width:100%;max-width:1400px;margin:auto;padding:0 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  background:#111827;color:#fff;font-size:13px;font-weight:800;
+}
+.brand h1{font-size:16px;letter-spacing:-.3px}
+.brand p{margin-top:2px;color:#9ca3af;font-size:9px;letter-spacing:1.5px}
+.logout-btn{
+  border:1px solid var(--line);background:#fff;color:#374151;
+  padding:9px 13px;border-radius:9px;font-size:12px;font-weight:700;
 }
 
-
-button,
-input,
-textarea{
-
-    font:inherit;
-
+.login-shell{
+  min-height:calc(100vh - 70px);
+  display:flex;align-items:center;justify-content:center;padding:24px;
 }
-
-
-button{
-
-    cursor:pointer;
-
-}
-
-
-.hidden{
-
-    display:none !important;
-
-}
-
-
-
-/* HEADER */
-
-.header{
-
-    height:70px;
-
-    display:flex;
-
-    align-items:center;
-
-    border-bottom:
-        1px solid #e5e7eb;
-
-    background:#fff;
-
-}
-
-
-.header-inner{
-
-    width:100%;
-
-    max-width:1400px;
-
-    margin:auto;
-
-    padding:0 24px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:
-        space-between;
-
-}
-
-
-.brand h1{
-
-    font-size:17px;
-
-}
-
-
-.brand p{
-
-    margin-top:3px;
-
-    color:#9ca3af;
-
-    font-size:9px;
-
-    letter-spacing:1.5px;
-
-}
-
-
-.logout{
-
-    padding:
-        9px 13px;
-
-    border:
-        1px solid #e5e7eb;
-
-    border-radius:9px;
-
-    background:#fff;
-
-}
-
-
-
-/* LOGIN */
-
-.login-page{
-
-    min-height:
-        calc(
-            100vh - 70px
-        );
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    padding:20px;
-
-}
-
-
 .login-card{
-
-    width:100%;
-
-    max-width:420px;
-
-    padding:28px;
-
-    background:#fff;
-
-    border:
-        1px solid #e5e7eb;
-
-    border-radius:18px;
-
+  width:100%;max-width:430px;background:#fff;border:1px solid var(--line);
+  border-radius:20px;padding:28px;box-shadow:0 18px 50px rgba(17,24,39,.06);
 }
-
-
-.login-card h2{
-
-    font-size:25px;
-
+.login-card h2{font-size:25px;letter-spacing:-.8px}
+.login-card p{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.6}
+.label{display:block;margin:20px 0 8px;font-size:12px;font-weight:700}
+.input,.textarea{
+  width:100%;border:1px solid #d9dde3;border-radius:10px;
+  outline:none;background:#fff;color:#111827;
 }
-
-
-.login-card p{
-
-    margin-top:8px;
-
-    color:#6b7280;
-
-    font-size:13px;
-
-    line-height:1.6;
-
+.input{height:50px;padding:0 14px}
+.textarea{min-height:100px;padding:12px 14px;resize:vertical}
+.input:focus,.textarea:focus{border-color:#8c949f;box-shadow:0 0 0 3px rgba(17,24,39,.05)}
+.primary-btn{
+  width:100%;height:50px;margin-top:12px;border:0;border-radius:10px;
+  background:#111827;color:#fff;font-size:13px;font-weight:750;
 }
+.otp-area{display:none;margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.otp-area.show{display:block}
+.otp-input{text-align:center;letter-spacing:10px;font-size:22px;font-weight:700;padding-left:23px}
+.message{display:none;margin-top:14px;padding:11px 12px;border-radius:9px;font-size:12px;line-height:1.45}
+.message.show{display:block}
+.message.ok{background:var(--green-bg);color:var(--green);border:1px solid #d8ecdf}
+.message.err{background:var(--red-bg);color:var(--red);border:1px solid #f4d4cf}
 
-
-.label{
-
-    display:block;
-
-    margin:
-        20px 0 8px;
-
-    font-size:12px;
-
-    font-weight:700;
-
+.admin{
+  display:none;
+  width:100%;max-width:1400px;margin:auto;padding:28px 24px 60px;
 }
-
-
-.input{
-
-    width:100%;
-
-    height:50px;
-
-    padding:0 14px;
-
-    border:
-        1px solid #d9dde3;
-
-    border-radius:10px;
-
-    outline:none;
-
+.admin.show{display:block}
+.page-head{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:24px;
 }
-
-
-.btn{
-
-    width:100%;
-
-    height:50px;
-
-    margin-top:12px;
-
-    border:none;
-
-    border-radius:10px;
-
-    background:#111827;
-
-    color:#fff;
-
-    font-weight:700;
-
+.page-head h2{font-size:30px;letter-spacing:-1.1px}
+.page-head p{margin-top:6px;color:var(--muted);font-size:13px}
+.refresh-btn{
+  border:1px solid var(--line);background:#fff;border-radius:9px;
+  padding:10px 13px;font-size:12px;font-weight:700;
 }
-
-
-.otp-section{
-
-    display:none;
-
-    margin-top:18px;
-
-    padding-top:18px;
-
-    border-top:
-        1px solid #eee;
-
-}
-
-
-.otp-section.show{
-
-    display:block;
-
-}
-
-
-.otp{
-
-    text-align:center;
-
-    letter-spacing:10px;
-
-    font-size:22px;
-
-    font-weight:700;
-
-}
-
-
-
-/* DASHBOARD */
-
-.dashboard{
-
-    display:none;
-
-    width:100%;
-
-    max-width:1400px;
-
-    margin:auto;
-
-    padding:
-        30px 24px 60px;
-
-}
-
-
-.dashboard.show{
-
-    display:block;
-
-}
-
-
-.dashboard-head{
-
-    margin-bottom:25px;
-
-}
-
-
-.dashboard-head h2{
-
-    font-size:31px;
-
-}
-
-
-.dashboard-head p{
-
-    margin-top:7px;
-
-    color:#6b7280;
-
-}
-
-
-
-/* STATS */
 
 .stats{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(
-            4,
-            1fr
-        );
-
-    gap:14px;
-
-    margin-bottom:22px;
-
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px
 }
-
-
 .stat{
-
-    padding:18px;
-
-    border:
-        1px solid #e5e7eb;
-
-    border-radius:13px;
-
-    background:#fff;
-
+  background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px
 }
+.stat small{display:block;color:#8b919a;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase}
+.stat strong{display:block;margin-top:9px;font-size:28px;letter-spacing:-1px}
 
-
-.stat span{
-
-    font-size:10px;
-
-    color:#8b919a;
-
-    text-transform:uppercase;
-
+.toolbar{
+  background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:12px;display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap
 }
-
-
-.stat strong{
-
-    display:block;
-
-    margin-top:8px;
-
-    font-size:28px;
-
+.search{
+  flex:1;min-width:230px;height:42px;border:1px solid #dfe2e6;border-radius:9px;padding:0 13px;outline:none
 }
-
-
-
-/* TABLE */
+.filter-btn{
+  height:42px;border:1px solid #e1e4e8;background:#fff;border-radius:9px;padding:0 13px;
+  font-size:11px;font-weight:750;color:#5b616b
+}
+.filter-btn.active{background:#111827;color:#fff;border-color:#111827}
 
 .table-card{
-
-    overflow:auto;
-
-    border:
-        1px solid #e5e7eb;
-
-    border-radius:13px;
-
-    background:#fff;
-
+  overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:14px
 }
-
-
-table{
-
-    width:100%;
-
-    min-width:900px;
-
-    border-collapse:
-        collapse;
-
-}
-
-
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:1050px}
 th{
-
-    padding:13px;
-
-    text-align:left;
-
-    background:#fafafa;
-
-    color:#8b919a;
-
-    font-size:10px;
-
+  padding:13px 14px;text-align:left;background:#fafafa;border-bottom:1px solid var(--line);
+  color:#818791;font-size:9.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase
 }
-
-
 td{
-
-    padding:14px;
-
-    border-top:
-        1px solid #eee;
-
-    font-size:12px;
-
+  padding:15px 14px;border-bottom:1px solid #eff0f2;font-size:12.5px;vertical-align:middle
 }
-
-
+tr:last-child td{border-bottom:0}
+.name{font-weight:750}
+.subtext{margin-top:4px;color:#8b919a;font-size:10.5px}
 .status{
-
-    padding:
-        6px 9px;
-
-    border-radius:
-        100px;
-
-    font-size:9px;
-
-    font-weight:700;
-
+  display:inline-flex;padding:6px 9px;border-radius:999px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px
 }
-
-
-.pending{
-
-    background:#fff8e6;
-
-    color:#9a6700;
-
+.status.pending{background:var(--amber-bg);color:var(--amber)}
+.status.accepted{background:var(--green-bg);color:var(--green)}
+.status.rejected{background:var(--red-bg);color:var(--red)}
+.view-btn{
+  border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;font-size:10.5px;font-weight:750
 }
+.empty{padding:50px 20px;text-align:center;color:#8b919a;font-size:13px}
 
-
-.accepted{
-
-    background:#eff8f3;
-
-    color:#18794e;
-
+.drawer-overlay{
+  position:fixed;inset:0;z-index:100;display:none;background:rgba(15,23,42,.28);backdrop-filter:blur(3px)
 }
-
-
-.rejected{
-
-    background:#fff4f2;
-
-    color:#b42318;
-
+.drawer-overlay.show{display:block}
+.drawer{
+  position:absolute;right:0;top:0;height:100%;width:min(100%,590px);
+  background:#fff;border-left:1px solid var(--line);overflow:auto;padding:26px;
+  box-shadow:-24px 0 60px rgba(15,23,42,.12)
 }
-
-
-.view{
-
-    padding:
-        8px 10px;
-
-    border:
-        1px solid #ddd;
-
-    border-radius:8px;
-
-    background:#fff;
-
+.drawer-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.drawer-top h3{font-size:24px;letter-spacing:-.7px}
+.drawer-top p{margin-top:6px;color:var(--muted);font-size:12px}
+.close-drawer{
+  width:38px;height:38px;border:1px solid var(--line);border-radius:9px;background:#fff;font-size:18px
 }
-
-
-
-/* MODAL */
-
-.modal-overlay{
-
-    position:fixed;
-
-    inset:0;
-
-    display:none;
-
-    align-items:center;
-
-    justify-content:center;
-
-    padding:20px;
-
-    background:
-        rgba(
-            0,
-            0,
-            0,
-            .4
-        );
-
+.detail-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px
 }
-
-
-.modal-overlay.show{
-
-    display:flex;
-
-}
-
-
-.modal{
-
-    width:100%;
-
-    max-width:600px;
-
-    max-height:90vh;
-
-    overflow:auto;
-
-    padding:26px;
-
-    border-radius:18px;
-
-    background:#fff;
-
-}
-
-
-.modal h3{
-
-    font-size:25px;
-
-}
-
-
-.details{
-
-    display:grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap:12px;
-
-    margin-top:20px;
-
-}
-
-
 .detail{
-
-    padding:13px;
-
-    background:#fafafa;
-
-    border:
-        1px solid #eee;
-
-    border-radius:10px;
-
+  padding:14px;border:1px solid #e8eaed;border-radius:11px;background:#fafafa
+}
+.detail.full{grid-column:1/-1}
+.detail small{display:block;color:#9298a1;font-size:9px;font-weight:800;letter-spacing:.6px;text-transform:uppercase}
+.detail div{margin-top:6px;font-size:12.5px;line-height:1.55;word-break:break-word}
+.link{color:#111827;text-decoration:underline}
+.action-area{
+  margin-top:22px;padding-top:20px;border-top:1px solid var(--line)
+}
+.action-area h4{font-size:14px}
+.action-area p{margin-top:5px;color:var(--muted);font-size:11.5px;line-height:1.5}
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.accept-btn,.reject-btn{
+  height:48px;border-radius:10px;font-weight:800;font-size:12px
+}
+.accept-btn{border:0;background:#111827;color:#fff}
+.reject-btn{border:1px solid #f0c5bf;background:#fff;color:#b42318}
+.decision-message{margin-top:12px}
+.reject-box{display:none;margin-top:12px}
+.reject-box.show{display:block}
+.confirm-reject{
+  width:100%;height:46px;margin-top:10px;border:0;border-radius:9px;background:#b42318;color:#fff;font-weight:800
 }
 
-
-.detail small{
-
-    color:#8b919a;
-
-    font-size:9px;
-
+@media(max-width:850px){
+  .stats{grid-template-columns:1fr 1fr}
+  .page-head{align-items:flex-start;flex-direction:column}
+  .detail-grid{grid-template-columns:1fr}
+  .detail.full{grid-column:auto}
 }
-
-
-.detail div{
-
-    margin-top:6px;
-
-    font-size:12px;
-
+@media(max-width:520px){
+  .topbar-inner,.admin{padding-left:14px;padding-right:14px}
+  .stats{grid-template-columns:1fr 1fr;gap:9px}
+  .stat{padding:14px}
+  .stat strong{font-size:23px}
+  .drawer{padding:20px 16px}
+  .action-row{grid-template-columns:1fr}
 }
-
-
-.full{
-
-    grid-column:
-        1 / -1;
-
-}
-
-
-.actions{
-
-    display:grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap:10px;
-
-    margin-top:20px;
-
-}
-
-
-.accept{
-
-    height:48px;
-
-    border:none;
-
-    border-radius:10px;
-
-    background:#111827;
-
-    color:#fff;
-
-    font-weight:700;
-
-}
-
-
-.reject{
-
-    height:48px;
-
-    border:
-        1px solid #efc4bf;
-
-    border-radius:10px;
-
-    background:#fff;
-
-    color:#b42318;
-
-    font-weight:700;
-
-}
-
-
-.close{
-
-    width:100%;
-
-    height:44px;
-
-    margin-top:10px;
-
-    border:
-        1px solid #ddd;
-
-    border-radius:9px;
-
-    background:#fff;
-
-}
-
-
-@media(
-    max-width:700px
-){
-
-    .stats{
-
-        grid-template-columns:
-            1fr 1fr;
-
-    }
-
-
-    .details{
-
-        grid-template-columns:
-            1fr;
-
-    }
-
-
-    .full{
-
-        grid-column:auto;
-
-    }
-
-
-    .actions{
-
-        grid-template-columns:
-            1fr;
-
-    }
-
-}
-
 </style>
-
 </head>
-
 
 <body>
 
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">CS</div>
+      <div>
+        <h1>Cezonal Careers Admin</h1>
+        <p>CEZONAL SOLUTIONS PRIVATE LIMITED</p>
+      </div>
+    </div>
 
-<header class="header">
-
-<div class="header-inner">
-
-<div class="brand">
-
-<h1>
-Cezonal Careers Admin
-</h1>
-
-<p>
-CEZONAL SOLUTIONS PRIVATE LIMITED
-</p>
-
-</div>
-
-
-<button
-id="logoutBtn"
-class="logout hidden"
->
-
-Sign out
-
-</button>
-
-</div>
-
+    <button id="logoutBtn" class="logout-btn hidden" type="button">
+      Sign out
+    </button>
+  </div>
 </header>
 
+<section id="loginShell" class="login-shell">
+  <div class="login-card">
+    <h2>Admin access</h2>
+    <p>Sign in with an email registered in the <strong>career_admins</strong> table.</p>
 
+    <label class="label" for="adminEmail">Admin email</label>
+    <input id="adminEmail" class="input" type="email" autocomplete="email" placeholder="admin@cezonalsolutions.com">
 
-<section
-id="loginPage"
-class="login-page"
->
+    <button id="sendOtpBtn" class="primary-btn" type="button">
+      Send admin OTP
+    </button>
 
-<div class="login-card">
+    <div id="otpArea" class="otp-area">
+      <label class="label" for="adminOtp">Verification code</label>
+      <input id="adminOtp" class="input otp-input" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="------">
 
-<h2>
-Admin Login
-</h2>
+      <button id="verifyOtpBtn" class="primary-btn" type="button">
+        Verify & Open Dashboard
+      </button>
+    </div>
 
-<p>
-Only authorized careers administrators can access applications.
-</p>
-
-
-<label
-class="label"
->
-
-Admin Email
-
-</label>
-
-
-<input
-id="adminEmail"
-class="input"
-type="email"
-placeholder="admin@gmail.com"
->
-
-
-<button
-id="sendOtpBtn"
-class="btn"
->
-
-Send OTP
-
-</button>
-
-
-<div
-id="otpSection"
-class="otp-section"
->
-
-<label
-class="label"
->
-
-Enter OTP
-
-</label>
-
-
-<input
-id="otpInput"
-class="input otp"
-maxlength="6"
-inputmode="numeric"
->
-
-
-<button
-id="verifyBtn"
-class="btn"
->
-
-Verify & Login
-
-</button>
-
-</div>
-
-</div>
-
+    <div id="loginMessage" class="message"></div>
+  </div>
 </section>
 
+<main id="adminPanel" class="admin">
+  <div class="page-head">
+    <div>
+      <h2>Applications</h2>
+      <p>Review candidate applications and send acceptance or rejection emails.</p>
+    </div>
 
+    <button id="refreshBtn" class="refresh-btn" type="button">
+      Refresh
+    </button>
+  </div>
 
-<main
-id="dashboard"
-class="dashboard"
->
+  <section class="stats">
+    <div class="stat">
+      <small>Total</small>
+      <strong id="totalCount">0</strong>
+    </div>
+    <div class="stat">
+      <small>Pending</small>
+      <strong id="pendingCount">0</strong>
+    </div>
+    <div class="stat">
+      <small>Accepted</small>
+      <strong id="acceptedCount">0</strong>
+    </div>
+    <div class="stat">
+      <small>Rejected</small>
+      <strong id="rejectedCount">0</strong>
+    </div>
+  </section>
 
-<div class="dashboard-head">
+  <section class="toolbar">
+    <input id="searchInput" class="search" type="search" placeholder="Search name, email, phone or job role">
 
-<h2>
-Applications
-</h2>
+    <button class="filter-btn active" data-filter="all" type="button">All</button>
+    <button class="filter-btn" data-filter="pending" type="button">Pending</button>
+    <button class="filter-btn" data-filter="accepted" type="button">Accepted</button>
+    <button class="filter-btn" data-filter="rejected" type="button">Rejected</button>
+  </section>
 
-<p>
-Review submitted applications.
-</p>
-
-</div>
-
-
-<section class="stats">
-
-<div class="stat">
-
-<span>Total</span>
-
-<strong id="total">
-0
-</strong>
-
-</div>
-
-
-<div class="stat">
-
-<span>Pending</span>
-
-<strong id="pending">
-0
-</strong>
-
-</div>
-
-
-<div class="stat">
-
-<span>Accepted</span>
-
-<strong id="accepted">
-0
-</strong>
-
-</div>
-
-
-<div class="stat">
-
-<span>Rejected</span>
-
-<strong id="rejected">
-0
-</strong>
-
-</div>
-
-</section>
-
-
-
-<div class="table-card">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>
-Applicant
-</th>
-
-<th>
-Role
-</th>
-
-<th>
-Phone
-</th>
-
-<th>
-Date
-</th>
-
-<th>
-Status
-</th>
-
-<th>
-Action
-</th>
-
-</tr>
-
-</thead>
-
-
-<tbody id="applicationRows">
-
-</tbody>
-
-</table>
-
-</div>
-
+  <section class="table-card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Applicant</th>
+            <th>Role</th>
+            <th>Phone</th>
+            <th>Submitted</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="applicationsBody"></tbody>
+      </table>
+    </div>
+    <div id="emptyState" class="empty hidden">No applications found.</div>
+  </section>
 </main>
 
+<div id="drawerOverlay" class="drawer-overlay">
+  <aside class="drawer">
+    <div class="drawer-top">
+      <div>
+        <h3 id="drawerName">Applicant</h3>
+        <p id="drawerRole">Job role</p>
+      </div>
 
+      <button id="closeDrawerBtn" class="close-drawer" type="button">×</button>
+    </div>
 
-<div
-id="modalOverlay"
-class="modal-overlay"
->
+    <div id="drawerDetails" class="detail-grid"></div>
 
-<div class="modal">
+    <div class="action-area">
+      <h4>Application decision</h4>
+      <p>Accepting or rejecting updates Supabase and automatically emails the applicant.</p>
 
-<h3 id="modalName">
-Applicant
-</h3>
+      <div class="action-row">
+        <button id="acceptBtn" class="accept-btn" type="button">
+          Shortlist Application
+        </button>
 
+        <button id="rejectBtn" class="reject-btn" type="button">
+          Reject Application
+        </button>
+      </div>
 
-<div
-id="details"
-class="details"
->
+      <div id="rejectBox" class="reject-box">
+        <label class="label" for="rejectReason">Rejection note (optional)</label>
+        <textarea id="rejectReason" class="textarea" placeholder="Example: We have decided to proceed with other candidates at this time."></textarea>
+
+        <button id="confirmRejectBtn" class="confirm-reject" type="button">
+          Confirm Rejection
+        </button>
+      </div>
+
+      <div id="decisionMessage" class="message decision-message"></div>
+    </div>
+  </aside>
 </div>
-
-
-<div class="actions">
-
-<button
-id="acceptBtn"
-class="accept"
->
-
-Accept Application
-
-</button>
-
-
-<button
-id="rejectBtn"
-class="reject"
->
-
-Reject Application
-
-</button>
-
-</div>
-
-
-<button
-id="closeBtn"
-class="close"
->
-
-Close
-
-</button>
-
-</div>
-
-</div>
-
-
 
 <script>
-
-
 const SUPABASE_URL =
-"https://yezfrkciwosyyookyogs.supabase.co";
-
+  "https://yezfrkciwosyyookyogs.supabase.co";
 
 const SUPABASE_ANON_KEY =
-"sb_publishable_v97iTR8ILzJ_K0X1vmeYiA_SrZcsd57";
+  "sb_publishable_v97iTR8ILzJ_K0X1vmeYiA_SrZcsd57";
 
+const ADMIN_ACTION_FUNCTION =
+  "admin-application-action";
 
 const supabaseClient =
-window.supabase.createClient(
-
-SUPABASE_URL,
-
-SUPABASE_ANON_KEY
-
-);
-
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 
 let applications = [];
-
+let currentFilter = "all";
 let selectedApplication = null;
 
+const loginShell = document.getElementById("loginShell");
+const adminPanel = document.getElementById("adminPanel");
+const logoutBtn = document.getElementById("logoutBtn");
+const loginMessage = document.getElementById("loginMessage");
+const otpArea = document.getElementById("otpArea");
+const adminEmail = document.getElementById("adminEmail");
+const adminOtp = document.getElementById("adminOtp");
+const sendOtpBtn = document.getElementById("sendOtpBtn");
+const verifyOtpBtn = document.getElementById("verifyOtpBtn");
+const applicationsBody = document.getElementById("applicationsBody");
+const emptyState = document.getElementById("emptyState");
+const searchInput = document.getElementById("searchInput");
+const drawerOverlay = document.getElementById("drawerOverlay");
+const drawerDetails = document.getElementById("drawerDetails");
+const drawerName = document.getElementById("drawerName");
+const drawerRole = document.getElementById("drawerRole");
+const acceptBtn = document.getElementById("acceptBtn");
+const rejectBtn = document.getElementById("rejectBtn");
+const rejectBox = document.getElementById("rejectBox");
+const rejectReason = document.getElementById("rejectReason");
+const confirmRejectBtn = document.getElementById("confirmRejectBtn");
+const decisionMessage = document.getElementById("decisionMessage");
 
-
-const loginPage =
-document.getElementById(
-"loginPage"
-);
-
-
-const dashboard =
-document.getElementById(
-"dashboard"
-);
-
-
-const adminEmail =
-document.getElementById(
-"adminEmail"
-);
-
-
-const otpSection =
-document.getElementById(
-"otpSection"
-);
-
-
-const otpInput =
-document.getElementById(
-"otpInput"
-);
-
-
-const sendOtpBtn =
-document.getElementById(
-"sendOtpBtn"
-);
-
-
-const verifyBtn =
-document.getElementById(
-"verifyBtn"
-);
-
-
-
-async function sendOTP(){
-
-const email =
-adminEmail
-.value
-.trim()
-.toLowerCase();
-
-
-if(!email){
-
-alert(
-"Enter admin email"
-);
-
-return;
-
+function showMessage(element, text, type="ok"){
+  element.textContent = text;
+  element.className = "message show " + (type === "err" ? "err" : "ok");
 }
 
-
-const {
-error
-} =
-await supabaseClient
-.auth
-.signInWithOtp({
-
-email,
-
-options:{
-
-shouldCreateUser:false
-
+function clearMessage(element){
+  element.textContent = "";
+  element.className = "message";
 }
 
-});
-
-
-if(error){
-
-alert(
-error.message
-);
-
-return;
-
+function esc(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 
-
-otpSection
-.classList
-.add(
-"show"
-);
-
-
+function formatDate(value){
+  if(!value) return "-";
+  return new Intl.DateTimeFormat(
+    "en-IN",
+    {
+      dateStyle:"medium",
+      timeStyle:"short"
+    }
+  ).format(new Date(value));
 }
 
+function normalizedStatus(app){
+  const value = String(
+    app.review_status ||
+    app.status ||
+    "pending"
+  ).toLowerCase();
 
-async function verifyOTP(){
+  if(value === "accepted") return "accepted";
+  if(value === "rejected") return "rejected";
 
-const email =
-adminEmail
-.value
-.trim()
-.toLowerCase();
-
-
-const token =
-otpInput
-.value
-.trim();
-
-
-const {
-data,
-error
-} =
-await supabaseClient
-.auth
-.verifyOtp({
-
-email,
-
-token,
-
-type:"email"
-
-});
-
-
-if(error){
-
-alert(
-error.message
-);
-
-return;
-
+  return "pending";
 }
 
+async function isCurrentUserAdmin(){
+  const {
+    data:{ user },
+    error:userError
+  } = await supabaseClient.auth.getUser();
 
-const allowed =
-await checkAdmin();
+  if(userError || !user?.id) return false;
 
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("career_admins")
+    .select("id,email,is_active")
+    .eq("user_id", user.id)
+    .eq("is_active", true)
+    .maybeSingle();
 
-if(!allowed){
+  if(error){
+    console.error("ADMIN CHECK ERROR:", error);
+    return false;
+  }
 
-await supabaseClient
-.auth
-.signOut();
-
-
-alert(
-"Not authorized as admin."
-);
-
-
-return;
-
+  return !!data;
 }
 
+async function sendAdminOtp(){
+  clearMessage(loginMessage);
 
-openDashboard();
+  const email =
+    adminEmail.value.trim().toLowerCase();
 
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    showMessage(
+      loginMessage,
+      "Enter a valid admin email.",
+      "err"
+    );
+    return;
+  }
+
+  sendOtpBtn.disabled = true;
+  sendOtpBtn.textContent = "Sending...";
+
+  try{
+    /*
+      Only already-created admin users should be able to log in.
+      shouldCreateUser=false stops random emails creating accounts.
+    */
+    const { error } =
+      await supabaseClient.auth.signInWithOtp({
+        email,
+        options:{
+          shouldCreateUser:false
+        }
+      });
+
+    if(error) throw error;
+
+    otpArea.classList.add("show");
+
+    showMessage(
+      loginMessage,
+      "Admin OTP sent. Check your email."
+    );
+
+    adminOtp.focus();
+  }
+  catch(error){
+    console.error("ADMIN OTP ERROR:", error);
+
+    showMessage(
+      loginMessage,
+      error?.message || "Unable to send admin OTP.",
+      "err"
+    );
+  }
+  finally{
+    sendOtpBtn.disabled = false;
+    sendOtpBtn.textContent = "Send admin OTP";
+  }
 }
 
+async function verifyAdminOtp(){
+  clearMessage(loginMessage);
 
+  const email =
+    adminEmail.value.trim().toLowerCase();
 
-async function checkAdmin(){
+  const token =
+    adminOtp.value.replace(/\D/g,"");
 
-const {
-data:{
-user
+  if(token.length !== 6){
+    showMessage(
+      loginMessage,
+      "Enter the complete 6-digit OTP.",
+      "err"
+    );
+    return;
+  }
+
+  verifyOtpBtn.disabled = true;
+  verifyOtpBtn.textContent = "Verifying...";
+
+  try{
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth.verifyOtp({
+        email,
+        token,
+        type:"email"
+      });
+
+    if(error) throw error;
+
+    if(!data?.user){
+      throw new Error("Admin authentication failed.");
+    }
+
+    const allowed =
+      await isCurrentUserAdmin();
+
+    if(!allowed){
+      await supabaseClient.auth.signOut();
+
+      throw new Error(
+        "This account is not authorized for the careers admin dashboard."
+      );
+    }
+
+    await openDashboard();
+  }
+  catch(error){
+    console.error("ADMIN VERIFY ERROR:", error);
+
+    showMessage(
+      loginMessage,
+      error?.message || "Unable to verify admin.",
+      "err"
+    );
+  }
+  finally{
+    verifyOtpBtn.disabled = false;
+    verifyOtpBtn.textContent = "Verify & Open Dashboard";
+  }
 }
-} =
-await supabaseClient
-.auth
-.getUser();
-
-
-if(!user){
-
-return false;
-
-}
-
-
-const {
-data
-} =
-await supabaseClient
-.from(
-"career_admins"
-)
-.select("*")
-.eq(
-"user_id",
-user.id
-)
-.eq(
-"is_active",
-true
-)
-.maybeSingle();
-
-
-return !!data;
-
-}
-
-
 
 async function openDashboard(){
+  loginShell.classList.add("hidden");
+  adminPanel.classList.add("show");
+  logoutBtn.classList.remove("hidden");
 
-loginPage.style.display =
-"none";
-
-
-dashboard.classList.add(
-"show"
-);
-
-
-document
-.getElementById(
-"logoutBtn"
-)
-.classList
-.remove(
-"hidden"
-);
-
-
-loadApplications();
-
+  await loadApplications();
 }
-
-
 
 async function loadApplications(){
+  applicationsBody.innerHTML = `
+    <tr>
+      <td colspan="7" style="text-align:center;color:#8b919a;padding:36px">
+        Loading applications...
+      </td>
+    </tr>
+  `;
 
-const {
-data,
-error
-} =
-await supabaseClient
-.from(
-"career_applications"
-)
-.select("*")
-.order(
-"created_at",
-{
-ascending:false
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("career_applications")
+      .select("*")
+      .order("created_at",{
+        ascending:false
+      });
+
+  if(error){
+    console.error("APPLICATION LOAD ERROR:", error);
+
+    applicationsBody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align:center;color:#b42318;padding:36px">
+          ${esc(error.message)}
+        </td>
+      </tr>
+    `;
+
+    return;
+  }
+
+  applications = data || [];
+
+  renderStats();
+  renderApplications();
 }
-);
-
-
-if(error){
-
-console.error(
-error
-);
-
-return;
-
-}
-
-
-applications =
-data || [];
-
-
-renderApplications();
-
-renderStats();
-
-}
-
-
-
-function getStatus(
-application
-){
-
-return (
-
-application.review_status
-
-||
-
-"pending"
-
-).toLowerCase();
-
-}
-
-
 
 function renderStats(){
+  const statuses =
+    applications.map(normalizedStatus);
 
-document
-.getElementById(
-"total"
-)
-.textContent =
-applications.length;
+  document.getElementById("totalCount").textContent =
+    applications.length;
 
+  document.getElementById("pendingCount").textContent =
+    statuses.filter(v => v === "pending").length;
 
-document
-.getElementById(
-"pending"
-)
-.textContent =
-applications
-.filter(
-a =>
-getStatus(a) ===
-"pending"
-)
-.length;
+  document.getElementById("acceptedCount").textContent =
+    statuses.filter(v => v === "accepted").length;
 
-
-document
-.getElementById(
-"accepted"
-)
-.textContent =
-applications
-.filter(
-a =>
-getStatus(a) ===
-"accepted"
-)
-.length;
-
-
-document
-.getElementById(
-"rejected"
-)
-.textContent =
-applications
-.filter(
-a =>
-getStatus(a) ===
-"rejected"
-)
-.length;
-
+  document.getElementById("rejectedCount").textContent =
+    statuses.filter(v => v === "rejected").length;
 }
-
-
 
 function renderApplications(){
+  const q =
+    searchInput.value.trim().toLowerCase();
 
-const tbody =
-document.getElementById(
-"applicationRows"
-);
+  const filtered =
+    applications.filter(app => {
+      const status = normalizedStatus(app);
 
+      if(
+        currentFilter !== "all" &&
+        status !== currentFilter
+      ){
+        return false;
+      }
 
-tbody.innerHTML =
-applications
-.map(
-app => {
+      if(!q) return true;
 
-const status =
-getStatus(
-app
-);
+      const haystack = [
+        app.full_name,
+        app.email,
+        app.phone,
+        app.job_role
+      ]
+      .join(" ")
+      .toLowerCase();
 
+      return haystack.includes(q);
+    });
 
-return `
+  if(!filtered.length){
+    applicationsBody.innerHTML = "";
+    emptyState.classList.remove("hidden");
+    return;
+  }
 
-<tr>
+  emptyState.classList.add("hidden");
 
-<td>
+  applicationsBody.innerHTML =
+    filtered.map(app => {
+      const status = normalizedStatus(app);
 
-<strong>
-${escapeHTML(
-app.full_name
-)}
-</strong>
+      return `
+        <tr>
+          <td>
+            <div class="name">${esc(app.full_name)}</div>
+            <div class="subtext">${esc(app.email)}</div>
+          </td>
 
-<br>
+          <td>${esc(app.job_role || "-")}</td>
 
-<small>
-${escapeHTML(
-app.email
-)}
-</small>
+          <td>${esc(app.phone || "-")}</td>
 
-</td>
+          <td>${esc(formatDate(app.created_at))}</td>
 
+          <td>${esc(app.email_status || "-")}</td>
 
-<td>
+          <td>
+            <span class="status ${status}">
+              ${esc(status)}
+            </span>
+          </td>
 
-${escapeHTML(
-app.job_role
-)}
-
-</td>
-
-
-<td>
-
-${escapeHTML(
-app.phone
-)}
-
-</td>
-
-
-<td>
-
-${new Date(
-app.created_at
-)
-.toLocaleString()}
-
-</td>
-
-
-<td>
-
-<span
-class="status ${status}"
->
-
-${status}
-
-</span>
-
-</td>
-
-
-<td>
-
-<button
-class="view"
-onclick="openApplication(${app.id})"
->
-
-View Details
-
-</button>
-
-</td>
-
-</tr>
-
-`;
-
-}
-)
-.join("");
-
+          <td>
+            <button
+              class="view-btn"
+              onclick="openApplication(${Number(app.id)})"
+              type="button"
+            >
+              View Details
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join("");
 }
 
+window.openApplication = function(id){
+  selectedApplication =
+    applications.find(
+      app => Number(app.id) === Number(id)
+    );
 
+  if(!selectedApplication) return;
 
-window.openApplication =
-function(id){
+  clearMessage(decisionMessage);
+  rejectBox.classList.remove("show");
+  rejectReason.value = "";
 
-selectedApplication =
-applications
-.find(
-a =>
-Number(a.id) ===
-Number(id)
-);
+  drawerName.textContent =
+    selectedApplication.full_name || "Applicant";
 
+  drawerRole.textContent =
+    selectedApplication.job_role || "Job Application";
 
-if(!selectedApplication){
+  const portfolio =
+    selectedApplication.portfolio_url
+      ? `<a class="link" href="${esc(selectedApplication.portfolio_url)}" target="_blank" rel="noopener noreferrer">${esc(selectedApplication.portfolio_url)}</a>`
+      : "-";
 
-return;
+  drawerDetails.innerHTML = `
+    <div class="detail">
+      <small>Email</small>
+      <div>${esc(selectedApplication.email || "-")}</div>
+    </div>
 
-}
+    <div class="detail">
+      <small>Phone</small>
+      <div>${esc(selectedApplication.phone || "-")}</div>
+    </div>
 
+    <div class="detail">
+      <small>Location</small>
+      <div>${esc(selectedApplication.location || "-")}</div>
+    </div>
 
-document
-.getElementById(
-"modalName"
-)
-.textContent =
-selectedApplication
-.full_name;
+    <div class="detail">
+      <small>Experience</small>
+      <div>${esc(selectedApplication.experience || "-")}</div>
+    </div>
 
+    <div class="detail">
+      <small>Qualification</small>
+      <div>${esc(selectedApplication.qualification || "-")}</div>
+    </div>
 
-document
-.getElementById(
-"details"
-)
-.innerHTML = `
+    <div class="detail">
+      <small>Authentication</small>
+      <div>${esc(selectedApplication.auth_provider || "-")}</div>
+    </div>
 
-<div class="detail">
+    <div class="detail full">
+      <small>Portfolio / Profile</small>
+      <div>${portfolio}</div>
+    </div>
 
-<small>
-Email
-</small>
+    <div class="detail full">
+      <small>Applicant Message</small>
+      <div>${esc(selectedApplication.cover_message || "-")}</div>
+    </div>
 
-<div>
-${escapeHTML(
-selectedApplication.email
-)}
-</div>
+    <div class="detail">
+      <small>Submitted</small>
+      <div>${esc(formatDate(selectedApplication.created_at))}</div>
+    </div>
 
-</div>
+    <div class="detail">
+      <small>Current Status</small>
+      <div>${esc(normalizedStatus(selectedApplication))}</div>
+    </div>
 
+    ${
+      selectedApplication.reviewed_at
+        ? `
+          <div class="detail">
+            <small>Reviewed</small>
+            <div>${esc(formatDate(selectedApplication.reviewed_at))}</div>
+          </div>
+        `
+        : ""
+    }
 
-<div class="detail">
+    ${
+      selectedApplication.rejection_reason
+        ? `
+          <div class="detail full">
+            <small>Rejection Note</small>
+            <div>${esc(selectedApplication.rejection_reason)}</div>
+          </div>
+        `
+        : ""
+    }
+  `;
 
-<small>
-Phone
-</small>
+  const status =
+    normalizedStatus(selectedApplication);
 
-<div>
-${escapeHTML(
-selectedApplication.phone
-)}
-</div>
+  acceptBtn.disabled =
+    status === "accepted";
 
-</div>
+  rejectBtn.disabled =
+    status === "rejected";
 
-
-<div class="detail">
-
-<small>
-Job Role
-</small>
-
-<div>
-${escapeHTML(
-selectedApplication.job_role
-)}
-</div>
-
-</div>
-
-
-<div class="detail">
-
-<small>
-Location
-</small>
-
-<div>
-${escapeHTML(
-selectedApplication.location
-||
-"-"
-)}
-</div>
-
-</div>
-
-
-<div class="detail">
-
-<small>
-Experience
-</small>
-
-<div>
-${escapeHTML(
-selectedApplication.experience
-||
-"-"
-)}
-</div>
-
-</div>
-
-
-<div class="detail">
-
-<small>
-Qualification
-</small>
-
-<div>
-${escapeHTML(
-selectedApplication.qualification
-||
-"-"
-)}
-</div>
-
-</div>
-
-
-<div class="detail full">
-
-<small>
-Portfolio
-</small>
-
-<div>
-${escapeHTML(
-selectedApplication.portfolio_url
-||
-"-"
-)}
-</div>
-
-</div>
-
-
-<div class="detail full">
-
-<small>
-Message
-</small>
-
-<div>
-${escapeHTML(
-selectedApplication.cover_message
-||
-"-"
-)}
-</div>
-
-</div>
-
-`;
-
-
-document
-.getElementById(
-"modalOverlay"
-)
-.classList
-.add(
-"show"
-);
-
+  drawerOverlay.classList.add("show");
+  document.documentElement.style.overflow = "hidden";
 };
 
-
-
-async function decision(
-action
-){
-
-if(
-!selectedApplication
-){
-
-return;
-
+function closeDrawer(){
+  drawerOverlay.classList.remove("show");
+  document.documentElement.style.overflow = "";
+  selectedApplication = null;
 }
 
+async function performDecision(action, reason=""){
+  if(!selectedApplication) return;
 
-const {
-data,
-error
-} =
-await supabaseClient
-.functions
-.invoke(
+  clearMessage(decisionMessage);
 
-"admin-application-action",
+  acceptBtn.disabled = true;
+  rejectBtn.disabled = true;
+  confirmRejectBtn.disabled = true;
 
-{
+  const originalAcceptText = acceptBtn.textContent;
+  const originalRejectText = confirmRejectBtn.textContent;
 
-body:{
+  if(action === "accept"){
+    acceptBtn.textContent = "Shortlisting...";
+  }else{
+    confirmRejectBtn.textContent = "Rejecting...";
+  }
 
-applicationId:
-selectedApplication.id,
+  try{
+    /*
+      Edge Function checks the currently authenticated user
+      is really an admin before changing any application.
+    */
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.functions.invoke(
+        ADMIN_ACTION_FUNCTION,
+        {
+          body:{
+            applicationId:
+              selectedApplication.id,
 
-action:
-action
+            action,
 
+            rejectionReason:
+              reason || null
+          }
+        }
+      );
+
+    if(error) throw error;
+
+    if(!data?.success){
+      throw new Error(
+        data?.error ||
+        "Unable to update application."
+      );
+    }
+
+    showMessage(
+      decisionMessage,
+      action === "accept"
+        ? "Application shortlisted and shortlist email sent."
+        : "Application rejected and rejection email sent."
+    );
+
+    await loadApplications();
+
+    selectedApplication =
+      applications.find(
+        app =>
+          Number(app.id) ===
+          Number(data.application?.id)
+      )
+      ||
+      selectedApplication;
+
+    setTimeout(()=>{
+      closeDrawer();
+    },900);
+  }
+  catch(error){
+    console.error("ADMIN ACTION ERROR:", error);
+
+    showMessage(
+      decisionMessage,
+      error?.message ||
+      "Unable to process this application.",
+      "err"
+    );
+
+    acceptBtn.disabled = false;
+    rejectBtn.disabled = false;
+  }
+  finally{
+    acceptBtn.textContent = originalAcceptText;
+    confirmRejectBtn.textContent = originalRejectText;
+    confirmRejectBtn.disabled = false;
+  }
 }
 
-}
+sendOtpBtn.addEventListener("click", sendAdminOtp);
+verifyOtpBtn.addEventListener("click", verifyAdminOtp);
 
-);
+adminOtp.addEventListener("input",function(){
+  this.value =
+    this.value.replace(/\D/g,"").slice(0,6);
+});
 
+document.getElementById("refreshBtn")
+  .addEventListener("click",loadApplications);
 
-if(error){
-
-alert(
-error.message
-);
-
-return;
-
-}
-
-
-alert(
-data.message
-);
-
+searchInput.addEventListener("input",renderApplications);
 
 document
-.getElementById(
-"modalOverlay"
-)
-.classList
-.remove(
-"show"
-);
+  .querySelectorAll(".filter-btn")
+  .forEach(button=>{
+    button.addEventListener("click",()=>{
+      document
+        .querySelectorAll(".filter-btn")
+        .forEach(btn=>btn.classList.remove("active"));
 
+      button.classList.add("active");
 
-loadApplications();
+      currentFilter =
+        button.dataset.filter;
 
+      renderApplications();
+    });
+  });
+
+document.getElementById("closeDrawerBtn")
+  .addEventListener("click",closeDrawer);
+
+drawerOverlay.addEventListener("click",event=>{
+  if(event.target === drawerOverlay){
+    closeDrawer();
+  }
+});
+
+acceptBtn.addEventListener("click",()=>{
+  performDecision("accept");
+});
+
+rejectBtn.addEventListener("click",()=>{
+  rejectBox.classList.toggle("show");
+});
+
+confirmRejectBtn.addEventListener("click",()=>{
+  performDecision(
+    "reject",
+    rejectReason.value.trim()
+  );
+});
+
+logoutBtn.addEventListener("click",async()=>{
+  await supabaseClient.auth.signOut();
+
+  adminPanel.classList.remove("show");
+  loginShell.classList.remove("hidden");
+  logoutBtn.classList.add("hidden");
+
+  applications = [];
+});
+
+async function restoreAdminSession(){
+  const {
+    data:{ session }
+  } = await supabaseClient.auth.getSession();
+
+  if(!session?.user) return;
+
+  const allowed =
+    await isCurrentUserAdmin();
+
+  if(allowed){
+    await openDashboard();
+  }else{
+    await supabaseClient.auth.signOut();
+  }
 }
 
-
-
-document
-.getElementById(
-"acceptBtn"
-)
-.onclick =
-() =>
-decision(
-"accept"
-);
-
-
-document
-.getElementById(
-"rejectBtn"
-)
-.onclick =
-() =>
-decision(
-"reject"
-);
-
-
-document
-.getElementById(
-"closeBtn"
-)
-.onclick =
-() => {
-
-document
-.getElementById(
-"modalOverlay"
-)
-.classList
-.remove(
-"show"
-);
-
-};
-
-
-sendOtpBtn
-.onclick =
-sendOTP;
-
-
-verifyBtn
-.onclick =
-verifyOTP;
-
-
-document
-.getElementById(
-"logoutBtn"
-)
-.onclick =
-async () => {
-
-await supabaseClient
-.auth
-.signOut();
-
-
-location.reload();
-
-};
-
-
-
-function escapeHTML(
-value
-){
-
-return String(
-value ?? ""
-)
-
-.replaceAll(
-"&",
-"&amp;"
-)
-
-.replaceAll(
-"<",
-"&lt;"
-)
-
-.replaceAll(
-">",
-"&gt;"
-)
-
-.replaceAll(
-'"',
-"&quot;"
-)
-
-.replaceAll(
-"'",
-"&#039;"
-);
-
-}
-
-
-
-async function restore(){
-
-const {
-data:{
-session
-}
-} =
-await supabaseClient
-.auth
-.getSession();
-
-
-if(!session){
-
-return;
-
-}
-
-
-const allowed =
-await checkAdmin();
-
-
-if(allowed){
-
-openDashboard();
-
-}
-
-}
-
-
-restore();
-
-
+restoreAdminSession();
 </script>
-
 </body>
-
 </html>
