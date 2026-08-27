@@ -38756,7 +38756,14 @@ html{
       if(seconds<=0){
         clearInterval(successRedirectTimer);
         successRedirectTimer=null;
-        window.location.href='/index.html';
+        /*
+          IMPORTANT:
+          Use a RELATIVE redirect.
+          '/index.html' points to https://USERNAME.github.io/index.html
+          on GitHub Project Pages and can cause a 404.
+          './index.html' stays inside the current repository/folder.
+        */
+        window.location.href='./index.html';
       }
     },1000);
   }
