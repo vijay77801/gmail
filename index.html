@@ -39468,6 +39468,7 @@ html{
   const SUPABASE_URL='https://yezfrkciwosyyookyogs.supabase.co';
   const SUPABASE_ANON_KEY='sb_publishable_v97iTR8ILzJ_K0X1vmeYiA_SrZcsd57';
   const APPLICATION_EMAIL_FUNCTION='send-application-email';
+  const RESUME_BUCKET='career-resumes';
   const PENDING_ROLE_KEY='cezonal_pending_job_role';
   const AUTH_GMAIL_KEY='authenticatedGmail';
   const overlay=document.getElementById('czAuthOverlay'); if(!overlay)return;
@@ -39668,43 +39669,404 @@ html{
   }
   async function resetApplication(){document.getElementById('czApplicationForm').reset();projects=[];renderProjects();resumeName.textContent='';resumeName.classList.remove('show');localStorage.removeItem(FORM_STATE_KEY);localStorage.removeItem(FORM_STATE_KEY+'_step');localStorage.removeItem(PROJECTS_KEY);localStorage.removeItem(SKILLS_KEY);selectedSkills=[];renderSkills();await clearResumeDB();toggleDegreeDetails();toggleWorkFields();showStep(1)}
 
-  document.getElementById('czApplicationForm').addEventListener('submit',async e=>{e.preventDefault();setMessage(formMessage,'');if(!validateStep(3))return;setLoading(submitBtn,true);try{const {data:{user},error:userError}=await client.auth.getUser();if(userError||!user?.email)throw new Error('Your login session has expired. Please login again.');const fullName=val('czName'),phone=val('czPhone'),location=val('czLocation'),experience=val('czExperience'),qualification=val('czQualification'),portfolio=val('czPortfolio'),applicationMessage=val('czMessageField'),resumeFile=resumeInput.files[0],company=val('czCompany'),workRole=val('czRole'),pay=val('czPay'),degreeGroupValue=val('czDegreeGroup'),specializationValue=val('czSpecialization'),otherDegreeValue=val('czOtherDegree');syncProjectsFromDOM();const degreeDetailsText=(qualification==="Bachelor's Degree"||qualification==="Master's Degree")?`Degree / Group: ${degreeGroupValue==='Other'?otherDegreeValue:degreeGroupValue}\nSpecialization: ${specializationValue}\nSkills: ${selectedSkills.join(', ')}`:`Skills: ${selectedSkills.join(', ')}`;const experienceDetails=Number(experience)>0?`Company: ${company}\nRole: ${workRole}\nPay: ${pay}`:'Fresher / 0 years';const projectsText=projects.length?projects.map((p,i)=>`Project ${i+1}: ${p.name}\nDescription: ${p.description}\nLink: ${p.link||'N/A'}`).join('\n\n'):'No projects added';const combinedMessage=[applicationMessage,degreeDetailsText,experienceDetails,projectsText].filter(Boolean).join('\n\n---\n\n');
-      const {data:applicationRow,error:insertError}=await client.from('career_applications').insert({
-        user_id:user.id,
-        full_name:fullName,
-        email:user.email,
-        phone,
-        job_role:currentRole,
-        location:location||null,
-        experience:experience||null,
-        qualification:qualification||null,
-        portfolio_url:portfolio||null,
-        cover_message:combinedMessage||null,
-        auth_provider:user.app_metadata?.provider||'email',
+  document.getElementById('czApplicationForm').addEventListener('submit',async e=>{
+    e.preventDefault();
 
-        /* Applicant submission status */
-        status:'submitted',
-        email_status:'pending',
+    setMessage(formMessage,'');
 
-        /* Admin dashboard review status */
-        review_status:'pending',
-        reviewed_at:null,
-        reviewed_by:null,
-        rejection_reason:null,
-        decision_email_status:'not_sent',
-        decision_email_sent_at:null
+    if(!validateStep(3)) return;
 
-      }).select().single();
+    setLoading(submitBtn,true);
+
+    let uploadedResumePath=null;
+
+    try{
+      const {
+        data:{user},
+        error:userError
+      } =
+        await client.auth.getUser();
+
+      if(userError || !user?.email){
+        throw new Error(
+          'Your login session has expired. Please login again.'
+        );
+      }
+
+      const fullName=val('czName');
+      const phone=val('czPhone');
+      const location=val('czLocation');
+      const experience=val('czExperience');
+      const qualification=val('czQualification');
+      const portfolio=val('czPortfolio');
+      const applicationMessage=val('czMessageField');
+      const resumeFile=resumeInput.files[0];
+      const company=val('czCompany');
+      const workRole=val('czRole');
+      const pay=val('czPay');
+      const degreeGroupValue=val('czDegreeGroup');
+      const specializationValue=val('czSpecialization');
+      const otherDegreeValue=val('czOtherDegree');
+
+      /* =====================================================
+         RESUME VALIDATION
+      ===================================================== */
+
+      if(!resumeFile){
+        throw new Error(
+          'Please upload your resume.'
+        );
+      }
+
+      const allowedResumeTypes=[
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ];
+
+      const allowedResumeExtensions=[
+        '.pdf',
+        '.doc',
+        '.docx'
+      ];
+
+      const lowerResumeName=
+        String(resumeFile.name || '')
+          .toLowerCase();
+
+      const hasAllowedExtension=
+        allowedResumeExtensions.some(
+          ext=>lowerResumeName.endsWith(ext)
+        );
+
+      if(
+        !allowedResumeTypes.includes(resumeFile.type) &&
+        !hasAllowedExtension
+      ){
+        throw new Error(
+          'Only PDF, DOC and DOCX resumes are allowed.'
+        );
+      }
+
+      if(
+        resumeFile.size >
+        10 * 1024 * 1024
+      ){
+        throw new Error(
+          'Resume must be below 10 MB.'
+        );
+      }
+
+
+      /* =====================================================
+         PREPARE APPLICATION DETAILS
+      ===================================================== */
+
+      syncProjectsFromDOM();
+
+      const degreeDetailsText=
+        (
+          qualification==="Bachelor's Degree" ||
+          qualification==="Master's Degree"
+        )
+        ? `Degree / Group: ${degreeGroupValue==='Other'?otherDegreeValue:degreeGroupValue}
+Specialization: ${specializationValue}
+Skills: ${selectedSkills.join(', ')}`
+        : `Skills: ${selectedSkills.join(', ')}`;
+
+      const experienceDetails=
+        Number(experience)>0
+          ? `Company: ${company}
+Role: ${workRole}
+Pay: ${pay}`
+          : 'Fresher / 0 years';
+
+      const projectsText=
+        projects.length
+          ? projects.map(
+              (p,i)=>`Project ${i+1}: ${p.name}
+Description: ${p.description}
+Link: ${p.link||'N/A'}`
+            ).join('\n\n')
+          : 'No projects added';
+
+      const combinedMessage=[
+        applicationMessage,
+        degreeDetailsText,
+        experienceDetails,
+        projectsText
+      ]
+      .filter(Boolean)
+      .join('\n\n---\n\n');
+
+
+      /* =====================================================
+         UPLOAD RESUME TO PRIVATE SUPABASE STORAGE
+      ===================================================== */
+
+      const safeFileName=
+        String(resumeFile.name || 'resume')
+          .replace(
+            /[^a-zA-Z0-9._-]/g,
+            '_'
+          )
+          .slice(-120);
+
+      const uniquePart=
+        (
+          window.crypto &&
+          typeof window.crypto.randomUUID === 'function'
+        )
+          ? window.crypto.randomUUID()
+          : (
+              Date.now().toString(36) +
+              Math.random().toString(36).slice(2)
+            );
+
+      const resumePath=
+        `${user.id}/${Date.now()}-${uniquePart}-${safeFileName}`;
+
+      console.log(
+        'UPLOADING RESUME:',
+        resumePath
+      );
+
+      const {
+        data:resumeUploadData,
+        error:resumeUploadError
+      } =
+        await client.storage
+          .from(RESUME_BUCKET)
+          .upload(
+            resumePath,
+            resumeFile,
+            {
+              cacheControl:'3600',
+              upsert:false,
+              contentType:
+                resumeFile.type ||
+                'application/octet-stream'
+            }
+          );
+
+      if(resumeUploadError){
+        console.error(
+          'RESUME UPLOAD ERROR:',
+          resumeUploadError
+        );
+
+        throw new Error(
+          'Resume upload failed: ' +
+          resumeUploadError.message
+        );
+      }
+
+      uploadedResumePath=
+        resumePath;
+
+      console.log(
+        'RESUME UPLOADED SUCCESSFULLY:',
+        resumeUploadData
+      );
+
+
+      /* =====================================================
+         SAVE APPLICATION + RESUME DETAILS TO DATABASE
+      ===================================================== */
+
+      const {
+        data:applicationRow,
+        error:insertError
+      } =
+        await client
+          .from('career_applications')
+          .insert({
+            user_id:user.id,
+            full_name:fullName,
+            email:user.email,
+            phone,
+            job_role:currentRole,
+            location:location||null,
+            experience:experience||null,
+            qualification:qualification||null,
+            portfolio_url:portfolio||null,
+            cover_message:combinedMessage||null,
+            auth_provider:
+              user.app_metadata?.provider ||
+              'email',
+
+            status:'submitted',
+            email_status:'pending',
+
+            review_status:'pending',
+            reviewed_at:null,
+            reviewed_by:null,
+            rejection_reason:null,
+            decision_email_status:'not_sent',
+            decision_email_sent_at:null,
+
+            resume_bucket:
+              RESUME_BUCKET,
+
+            resume_path:
+              resumePath,
+
+            resume_file_name:
+              resumeFile.name,
+
+            resume_file_type:
+              resumeFile.type || null,
+
+            resume_file_size:
+              resumeFile.size || null
+          })
+          .select()
+          .single();
 
       if(insertError){
-        console.error('DATABASE INSERT ERROR:',insertError);
+        console.error(
+          'DATABASE INSERT ERROR:',
+          insertError
+        );
+
+        /*
+          If DB save fails after upload,
+          remove the uploaded resume so no orphan file remains.
+        */
+        if(uploadedResumePath){
+          const {
+            error:removeError
+          } =
+            await client.storage
+              .from(RESUME_BUCKET)
+              .remove([
+                uploadedResumePath
+              ]);
+
+          if(removeError){
+            console.warn(
+              'ORPHAN RESUME CLEANUP ERROR:',
+              removeError
+            );
+          }
+
+          uploadedResumePath=null;
+        }
+
         throw insertError;
       }
 
-      console.log('APPLICATION SAVED FOR ADMIN DASHBOARD:',applicationRow);
-      const {error:emailError}=await client.functions.invoke(APPLICATION_EMAIL_FUNCTION,{body:{name:fullName,email:user.email,jobRole:currentRole,phone,location,experience,qualification,portfolio,message:combinedMessage,company,workRole,pay,degreeGroup:degreeGroupValue==='Other'?otherDegreeValue:degreeGroupValue,specialization:specializationValue,skills:selectedSkills,projects,applicationId:applicationRow?.id||null,resumeFileName:resumeFile?.name||null,resumeFileType:resumeFile?.type||null}}); if(emailError){console.warn('Confirmation email failed:',emailError);if(applicationRow?.id)await client.from('career_applications').update({email_status:'failed'}).eq('id',applicationRow.id)}else if(applicationRow?.id){await client.from('career_applications').update({email_status:'sent'}).eq('id',applicationRow.id)}
-      localStorage.removeItem(PENDING_ROLE_KEY);localStorage.removeItem(FORM_STATE_KEY);localStorage.removeItem(FORM_STATE_KEY+'_step');localStorage.removeItem(PROJECTS_KEY);localStorage.removeItem(SKILLS_KEY);await clearResumeDB();showFinalSuccess();
-    }catch(err){console.error('APPLICATION SUBMIT ERROR',err);setMessage(formMessage,err?.message||'Could not submit application.')}finally{setLoading(submitBtn,false)}});
+      console.log(
+        'APPLICATION + RESUME SAVED:',
+        applicationRow
+      );
+
+
+      /* =====================================================
+         SEND CONFIRMATION EMAIL
+      ===================================================== */
+
+      const {
+        error:emailError
+      } =
+        await client.functions.invoke(
+          APPLICATION_EMAIL_FUNCTION,
+          {
+            body:{
+              name:fullName,
+              email:user.email,
+              jobRole:currentRole,
+              phone,
+              location,
+              experience,
+              qualification,
+              portfolio,
+              message:combinedMessage,
+              company,
+              workRole,
+              pay,
+              degreeGroup:
+                degreeGroupValue==='Other'
+                  ? otherDegreeValue
+                  : degreeGroupValue,
+              specialization:
+                specializationValue,
+              skills:selectedSkills,
+              projects,
+              applicationId:
+                applicationRow?.id || null,
+              resumeFileName:
+                resumeFile.name,
+              resumeFileType:
+                resumeFile.type || null
+            }
+          }
+        );
+
+      if(emailError){
+        console.warn(
+          'Confirmation email failed:',
+          emailError
+        );
+
+        if(applicationRow?.id){
+          await client
+            .from('career_applications')
+            .update({
+              email_status:'failed'
+            })
+            .eq(
+              'id',
+              applicationRow.id
+            );
+        }
+      }
+      else if(applicationRow?.id){
+        await client
+          .from('career_applications')
+          .update({
+            email_status:'sent'
+          })
+          .eq(
+            'id',
+            applicationRow.id
+          );
+      }
+
+
+      /* =====================================================
+         CLEAR LOCAL FORM CACHE + SHOW SUCCESS
+      ===================================================== */
+
+      localStorage.removeItem(PENDING_ROLE_KEY);
+      localStorage.removeItem(FORM_STATE_KEY);
+      localStorage.removeItem(FORM_STATE_KEY+'_step');
+      localStorage.removeItem(PROJECTS_KEY);
+      localStorage.removeItem(SKILLS_KEY);
+
+      await clearResumeDB();
+
+      showFinalSuccess();
+    }
+    catch(err){
+      console.error(
+        'APPLICATION SUBMIT ERROR',
+        err
+      );
+
+      setMessage(
+        formMessage,
+        err?.message ||
+        'Could not submit application.'
+      );
+    }
+    finally{
+      setLoading(
+        submitBtn,
+        false
+      );
+    }
+  });
 
   document.getElementById('czApplicationForm').addEventListener('change',saveFormState);
     async function restoreSession(){try{const pending=localStorage.getItem(PENDING_ROLE_KEY),{data:{session}}=await client.auth.getSession();if(session?.user?.email&&pending){currentRole=pending;selectedRole.textContent=currentRole;applicationRole.textContent=currentRole;overlay.classList.add('show');overlay.setAttribute('aria-hidden','false');document.documentElement.style.overflow='hidden';showApplication(session.user);if(window.location.search||window.location.hash)history.replaceState({},document.title,window.location.pathname)}}catch(err){console.error('SESSION RESTORE ERROR',err)}}
