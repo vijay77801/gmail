@@ -14611,6 +14611,164 @@ a{
 }
 #czApplicationView .cz-upload.cz-invalid + .cz-upload-error{display:block}
 
+
+/* =========================================================
+   CLEAN FULL PAGE CAREERS PROFILE
+   Profile is a normal Careers dropdown item.
+   No popup / modal card design.
+========================================================= */
+.cz-profile-menu-link{
+    border:0;
+    text-align:left;
+    background:transparent;
+    cursor:pointer;
+    font-family:inherit;
+}
+
+.cz-profile-overlay{
+    position:fixed !important;
+    inset:0 !important;
+    z-index:6000 !important;
+    display:none !important;
+    padding:0 !important;
+    align-items:stretch !important;
+    justify-content:stretch !important;
+    overflow-y:auto !important;
+    background:#fff !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+}
+
+.cz-profile-overlay.show{
+    display:block !important;
+}
+
+.cz-profile-modal{
+    position:relative !important;
+    width:100% !important;
+    max-width:none !important;
+    min-height:100vh !important;
+    max-height:none !important;
+    overflow:visible !important;
+    margin:0 !important;
+    border:0 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    background:#fff !important;
+}
+
+.cz-profile-body{
+    width:min(100% - 40px, 980px) !important;
+    margin:0 auto !important;
+    padding:110px 0 70px !important;
+}
+
+.cz-profile-close{
+    position:fixed !important;
+    top:24px !important;
+    right:28px !important;
+    width:auto !important;
+    height:auto !important;
+    padding:9px 0 !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    color:#111 !important;
+    font-size:30px !important;
+    box-shadow:none !important;
+}
+
+.cz-profile-title{
+    padding-right:55px !important;
+    font-size:clamp(30px,5vw,52px) !important;
+    line-height:1.08 !important;
+    letter-spacing:-2px !important;
+}
+
+.cz-profile-sub{
+    max-width:650px !important;
+    font-size:14px !important;
+}
+
+.cz-profile-data-view{
+    width:100% !important;
+}
+
+.cz-profile-user{
+    margin:0 0 42px !important;
+    padding:0 0 28px !important;
+    border:0 !important;
+    border-bottom:1px solid #e8e8e8 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+}
+
+.cz-profile-application-card{
+    margin:0 !important;
+    padding:28px 0 !important;
+    border:0 !important;
+    border-bottom:1px solid #e8e8e8 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+}
+
+.cz-profile-row{
+    padding:10px 0 !important;
+}
+
+.cz-profile-no-application{
+    margin:28px 0 0 !important;
+    padding:30px 0 !important;
+    border:0 !important;
+    border-top:1px solid #e8e8e8 !important;
+    border-bottom:1px solid #e8e8e8 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    color:#666 !important;
+    text-align:left !important;
+}
+
+.cz-profile-applications-heading{
+    margin:38px 0 8px;
+    color:#111;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+}
+
+.cz-profile-application-index{
+    margin-bottom:12px;
+    color:#8b8b8b;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+}
+
+@media(max-width:600px){
+    .cz-profile-body{
+        width:calc(100% - 30px) !important;
+        padding:88px 0 45px !important;
+    }
+
+    .cz-profile-close{
+        top:15px !important;
+        right:17px !important;
+    }
+
+    .cz-profile-title{
+        font-size:34px !important;
+        letter-spacing:-1.4px !important;
+    }
+
+    .cz-profile-application-card{
+        padding:23px 0 !important;
+    }
+}
+
 </style>
 
 
@@ -37438,6 +37596,649 @@ html{
     content:none !important;
     display:none !important;
 }
+
+/* =========================================================
+   CAREERS USER PROFILE + APPLICATION STATUS
+========================================================= */
+
+.cz-profile-nav-link{
+    border:0;
+    text-align:left;
+    cursor:pointer;
+    font-family:inherit;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+
+.cz-profile-nav-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#c7cbd1;
+    flex:0 0 auto;
+}
+
+.cz-profile-nav-dot.is-pending{ background:#d69e00; }
+.cz-profile-nav-dot.is-shortlisted{ background:#16835b; }
+.cz-profile-nav-dot.is-rejected{ background:#c43f35; }
+.cz-profile-nav-dot.is-logged{ background:#111; }
+
+.cz-profile-overlay{
+    position:fixed;
+    inset:0;
+    z-index:5000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:22px;
+    background:rgba(17,24,39,.28);
+    backdrop-filter:blur(7px);
+    -webkit-backdrop-filter:blur(7px);
+}
+
+.cz-profile-overlay.show{ display:flex; }
+
+.cz-profile-modal{
+    position:relative;
+    width:min(100%,520px);
+    max-height:min(90vh,760px);
+    overflow:auto;
+    background:#fff;
+    border:1px solid #e8e9ec;
+    border-radius:20px;
+    box-shadow:0 28px 80px rgba(15,23,42,.17);
+}
+
+.cz-profile-close{
+    position:absolute;
+    top:18px;
+    right:18px;
+    width:38px;
+    height:38px;
+    border:1px solid #e6e8eb;
+    border-radius:10px;
+    background:#fff;
+    color:#555;
+    font-size:20px;
+    line-height:1;
+    cursor:pointer;
+    z-index:2;
+}
+
+.cz-profile-body{ padding:34px; }
+
+.cz-profile-kicker{
+    margin-bottom:10px;
+    color:#959aa3;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1.8px;
+    text-transform:uppercase;
+}
+
+.cz-profile-title{
+    margin:0;
+    padding-right:45px;
+    color:#111827;
+    font-size:27px;
+    font-weight:650;
+    letter-spacing:-.9px;
+}
+
+.cz-profile-sub{
+    max-width:410px;
+    margin-top:9px;
+    color:#737982;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.cz-profile-google{
+    width:100%;
+    height:50px;
+    margin-top:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    border:1px solid #dfe3e7;
+    border-radius:10px;
+    background:#fff;
+    color:#202124;
+    font-weight:650;
+    cursor:pointer;
+}
+
+.cz-profile-google svg{
+    width:19px;
+    height:19px;
+}
+
+.cz-profile-divider{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:21px 0;
+    color:#a3a8af;
+    font-size:9px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+}
+
+.cz-profile-divider::before,
+.cz-profile-divider::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:#eceef1;
+}
+
+.cz-profile-label{
+    display:block;
+    margin:0 0 8px;
+    color:#3f4650;
+    font-size:11.5px;
+    font-weight:700;
+}
+
+.cz-profile-input{
+    width:100%;
+    height:50px;
+    padding:0 14px;
+    border:1px solid #dfe3e7;
+    border-radius:10px;
+    background:#fff;
+    color:#111827;
+    outline:none;
+}
+
+.cz-profile-input:focus{
+    border-color:#8d95a0;
+    box-shadow:0 0 0 3px rgba(17,24,39,.05);
+}
+
+.cz-profile-main-btn{
+    width:100%;
+    min-height:50px;
+    margin-top:12px;
+    border:0;
+    border-radius:10px;
+    background:#111827;
+    color:#fff;
+    font-weight:750;
+    cursor:pointer;
+}
+
+.cz-profile-main-btn:disabled,
+.cz-profile-google:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.cz-profile-message{
+    display:none;
+    margin-top:13px;
+    padding:10px 12px;
+    border-radius:9px;
+    font-size:11.5px;
+    line-height:1.5;
+}
+
+.cz-profile-message.show{
+    display:block;
+    background:#fff4f2;
+    color:#b42318;
+    border:1px solid #f1d2cd;
+}
+
+.cz-profile-otp-view,
+.cz-profile-data-view{
+    display:none;
+}
+
+.cz-profile-otp-view.show,
+.cz-profile-data-view.show{
+    display:block;
+}
+
+.cz-profile-login-view.hide{
+    display:none;
+}
+
+.cz-profile-email-chip{
+    display:inline-flex;
+    margin-top:13px;
+    padding:7px 11px;
+    border:1px solid #e2e5e8;
+    border-radius:999px;
+    background:#fafafa;
+    color:#4b5159;
+    font-size:11px;
+}
+
+.cz-profile-otp-row{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:8px;
+    margin-top:22px;
+}
+
+.cz-profile-otp-box{
+    min-width:0;
+    height:52px;
+    border:1px solid #d8dce1;
+    border-radius:9px;
+    text-align:center;
+    font-size:20px;
+    font-weight:700;
+    outline:none;
+}
+
+.cz-profile-otp-box:focus{
+    border:2px solid #111827;
+}
+
+.cz-profile-back{
+    margin-top:14px;
+    border:0;
+    background:transparent;
+    color:#646a73;
+    font-size:11px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.cz-profile-user-head{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding-bottom:22px;
+    border-bottom:1px solid #eceef1;
+}
+
+.cz-profile-avatar{
+    width:48px;
+    height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#111827;
+    color:#fff;
+    font-size:17px;
+    font-weight:800;
+    text-transform:uppercase;
+    flex:0 0 auto;
+}
+
+.cz-profile-user-name{
+    font-size:20px;
+    font-weight:700;
+    color:#111827;
+    letter-spacing:-.45px;
+}
+
+.cz-profile-user-email{
+    margin-top:4px;
+    color:#858b94;
+    font-size:11.5px;
+}
+
+.cz-profile-application-card{
+    margin-top:20px;
+    padding:18px;
+    border:1px solid #e7e9ec;
+    border-radius:14px;
+    background:#fafafa;
+}
+
+.cz-profile-row{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:18px;
+    padding:11px 0;
+    border-bottom:1px solid #eceef0;
+}
+
+.cz-profile-row:first-child{ padding-top:0; }
+.cz-profile-row:last-child{
+    padding-bottom:0;
+    border-bottom:0;
+}
+
+.cz-profile-row span{
+    color:#8a9098;
+    font-size:10px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+}
+
+.cz-profile-row strong{
+    max-width:62%;
+    color:#252a31;
+    font-size:12px;
+    text-align:right;
+    line-height:1.5;
+}
+
+.cz-profile-status{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:7px 10px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.2px;
+}
+
+.cz-profile-status::before{
+    content:"";
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:currentColor;
+}
+
+.cz-profile-status.pending{
+    background:#fff8e6;
+    color:#996800;
+}
+
+.cz-profile-status.shortlisted{
+    background:#eff8f3;
+    color:#18794e;
+}
+
+.cz-profile-status.rejected{
+    background:#fff4f2;
+    color:#b42318;
+}
+
+.cz-profile-no-application{
+    margin-top:20px;
+    padding:20px;
+    border:1px dashed #d9dde2;
+    border-radius:13px;
+    color:#777e87;
+    font-size:12.5px;
+    line-height:1.65;
+    text-align:center;
+}
+
+.cz-profile-actions{
+    display:flex;
+    gap:9px;
+    margin-top:18px;
+}
+
+.cz-profile-secondary{
+    flex:1;
+    height:44px;
+    border:1px solid #dfe3e7;
+    border-radius:9px;
+    background:#fff;
+    color:#424851;
+    font-size:11.5px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+@media(max-width:520px){
+    .cz-profile-overlay{
+        padding:0;
+        align-items:flex-end;
+    }
+
+    .cz-profile-modal{
+        width:100%;
+        max-height:92vh;
+        border-radius:20px 20px 0 0;
+    }
+
+    .cz-profile-body{
+        padding:28px 18px 24px;
+    }
+
+    .cz-profile-title{
+        font-size:24px;
+    }
+
+    .cz-profile-otp-row{
+        gap:6px;
+    }
+
+    .cz-profile-otp-box{
+        height:48px;
+    }
+}
+
+
+
+/* =========================================================
+   PROFILE INSIDE CAREERS DROPDOWN
+========================================================= */
+.cz-careers-profile-card{
+    width:100%;
+    min-height:58px;
+    margin:2px 0 6px;
+    padding:9px 10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    border:1px solid #e8eaed;
+    border-radius:11px;
+    background:#fafafa;
+    color:#20242a;
+    text-align:left;
+    cursor:pointer;
+    font-family:inherit;
+    transition:background .18s ease,border-color .18s ease;
+}
+
+.cz-careers-profile-card:hover{
+    background:#f4f5f6;
+    border-color:#dfe2e6;
+}
+
+.cz-careers-profile-avatar{
+    width:34px;
+    height:34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 auto;
+    border-radius:50%;
+    background:#111827;
+    color:#fff;
+    font-size:12px;
+    font-weight:800;
+    text-transform:uppercase;
+}
+
+.cz-careers-profile-copy{
+    min-width:0;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+}
+
+.cz-careers-profile-name{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color:#20242a;
+    font-size:12px;
+    font-weight:700;
+    line-height:1.15;
+}
+
+.cz-careers-profile-status{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color:#8a9098;
+    font-size:9px;
+    font-weight:700;
+    line-height:1.1;
+    text-transform:uppercase;
+    letter-spacing:.35px;
+}
+
+.cz-careers-profile-status.pending{color:#9a6700;}
+.cz-careers-profile-status.shortlisted{color:#18794e;}
+.cz-careers-profile-status.rejected{color:#b42318;}
+
+.cz-profile-nav-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#c8ccd1;
+    flex:0 0 auto;
+}
+
+.cz-profile-nav-dot.is-pending{background:#d69e00;}
+.cz-profile-nav-dot.is-shortlisted{background:#16835b;}
+.cz-profile-nav-dot.is-rejected{background:#c43f35;}
+.cz-profile-nav-dot.is-logged{background:#111827;}
+
+@media(max-width:900px){
+    .cz-careers-profile-card{
+        min-height:62px;
+        margin:4px 0 7px;
+        padding:10px 11px;
+    }
+
+    .cz-careers-profile-avatar{
+        width:36px;
+        height:36px;
+    }
+
+    .cz-careers-profile-name{
+        font-size:13px;
+    }
+
+    .cz-careers-profile-status{
+        font-size:9px;
+    }
+}
+
+
+
+/* =========================================================
+   CAREERS PROFILE — DESKTOP + MOBILE
+   Keeps profile inside Careers dropdown on every screen size
+========================================================= */
+
+/* Desktop / laptop */
+@media (min-width:901px){
+    .nav-item.dropdown .dropdown-menu{
+        width:250px;
+    }
+
+    .cz-careers-profile-card{
+        display:flex !important;
+        width:100%;
+        min-height:60px;
+    }
+}
+
+/* Tablet / mobile */
+@media (max-width:900px){
+
+    /* Give Careers dropdown enough room for Profile + links */
+    .dropdown.open .dropdown-menu{
+        max-height:520px !important;
+    }
+
+    .cz-careers-profile-card{
+        display:flex !important;
+        width:100%;
+        min-height:64px;
+        margin:4px 0 8px;
+        padding:10px 11px;
+        border-radius:11px;
+    }
+
+    .cz-careers-profile-avatar{
+        width:38px;
+        height:38px;
+        font-size:13px;
+    }
+
+    .cz-careers-profile-copy{
+        flex:1;
+        min-width:0;
+    }
+
+    .cz-careers-profile-name{
+        max-width:none;
+        font-size:13px;
+    }
+
+    .cz-careers-profile-status{
+        max-width:none;
+        font-size:9px;
+    }
+
+    .cz-profile-nav-dot{
+        width:8px;
+        height:8px;
+    }
+}
+
+/* Small phones */
+@media (max-width:520px){
+
+    .cz-careers-profile-card{
+        min-height:62px;
+        padding:10px;
+        gap:10px;
+    }
+
+    .cz-careers-profile-avatar{
+        width:36px;
+        height:36px;
+        font-size:12px;
+    }
+
+    .cz-careers-profile-name{
+        font-size:12.5px;
+    }
+
+    .cz-careers-profile-status{
+        font-size:8.5px;
+    }
+}
+
+/* Very small phones */
+@media (max-width:360px){
+
+    .cz-careers-profile-card{
+        min-height:60px;
+        padding:9px;
+        gap:9px;
+    }
+
+    .cz-careers-profile-avatar{
+        width:34px;
+        height:34px;
+    }
+
+    .cz-careers-profile-name{
+        font-size:12px;
+    }
+
+    .cz-careers-profile-status{
+        font-size:8px;
+    }
+}
+
 </style>
 
 </head>
@@ -37644,6 +38445,16 @@ html{
                     <a href="/job.html" class="dropdown-link">
                         Jobs
                     </a>
+
+                    
+                    <button type="button" class="dropdown-link cz-profile-menu-link" id="czProfileNavBtn">
+                        Profile
+                        <span id="czProfileNavName" hidden>Profile</span>
+                        <span id="czProfileNavStatus" hidden></span>
+                        <span id="czProfileNavAvatar" hidden>P</span>
+                        <span id="czProfileNavDot" hidden></span>
+                    </button>
+
 
                     <a href="/internships.html" class="dropdown-link">
                         Internships
@@ -37978,6 +38789,94 @@ html{
 
 
 
+
+
+<!-- =========================================================
+     CAREERS USER PROFILE / APPLICATION STATUS
+========================================================= -->
+<div class="cz-profile-overlay" id="czProfileOverlay" aria-hidden="true">
+  <div class="cz-profile-modal" role="dialog" aria-modal="true" aria-labelledby="czProfileTitle">
+    <button class="cz-profile-close" id="czProfileClose" type="button" aria-label="Close">&times;</button>
+
+    <div class="cz-profile-body">
+
+      <div class="cz-profile-login-view" id="czProfileLoginView">
+        <div class="cz-profile-kicker">CAREERS ACCOUNT</div>
+        <h2 class="cz-profile-title" id="czProfileTitle">View your application</h2>
+        <p class="cz-profile-sub">Sign in with the same email you used while applying to view your profile and latest application status.</p>
+
+        <button class="cz-profile-google" id="czProfileGoogleBtn" type="button">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path fill="#FFC107" d="M43.6 20H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-4z"/>
+            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4c-7.7 0-14.4 4.3-17.7 10.7z"/>
+            <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.3l-6.2-5.2C29.1 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.4 16.2 44 24 44z"/>
+            <path fill="#1976D2" d="M43.6 20H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.2 5.5l6.2 5.2C36.9 39.1 44 34 44 24c0-1.3-.1-2.7-.4-4z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="cz-profile-divider">or continue with email</div>
+
+        <label class="cz-profile-label" for="czProfileEmail">Email address</label>
+        <input class="cz-profile-input" id="czProfileEmail" type="email" autocomplete="email" placeholder="you@gmail.com">
+
+        <button class="cz-profile-main-btn" id="czProfileSendOtp" type="button">
+          Continue with Email OTP
+        </button>
+
+        <div class="cz-profile-message" id="czProfileLoginMessage"></div>
+      </div>
+
+      <div class="cz-profile-otp-view" id="czProfileOtpView">
+        <div class="cz-profile-kicker">EMAIL VERIFICATION</div>
+        <h2 class="cz-profile-title">Verify your email</h2>
+        <p class="cz-profile-sub">Enter the 6-digit verification code sent to your email.</p>
+        <div class="cz-profile-email-chip" id="czProfileOtpEmail"></div>
+
+        <div class="cz-profile-otp-row" id="czProfileOtpRow">
+          <input class="cz-profile-otp-box" inputmode="numeric" maxlength="1" aria-label="OTP digit 1">
+          <input class="cz-profile-otp-box" inputmode="numeric" maxlength="1" aria-label="OTP digit 2">
+          <input class="cz-profile-otp-box" inputmode="numeric" maxlength="1" aria-label="OTP digit 3">
+          <input class="cz-profile-otp-box" inputmode="numeric" maxlength="1" aria-label="OTP digit 4">
+          <input class="cz-profile-otp-box" inputmode="numeric" maxlength="1" aria-label="OTP digit 5">
+          <input class="cz-profile-otp-box" inputmode="numeric" maxlength="1" aria-label="OTP digit 6">
+        </div>
+
+        <button class="cz-profile-main-btn" id="czProfileVerifyOtp" type="button">
+          Verify OTP
+        </button>
+
+        <button class="cz-profile-back" id="czProfileChangeEmail" type="button">
+          ← Change email
+        </button>
+
+        <div class="cz-profile-message" id="czProfileOtpMessage"></div>
+      </div>
+
+      <div class="cz-profile-data-view" id="czProfileDataView">
+        <div class="cz-profile-kicker">YOUR CAREERS PROFILE</div>
+
+        <div class="cz-profile-user-head">
+          <div class="cz-profile-avatar" id="czProfileAvatar">U</div>
+          <div>
+            <div class="cz-profile-user-name" id="czProfileName">Applicant</div>
+            <div class="cz-profile-user-email" id="czProfileUserEmail"></div>
+          </div>
+        </div>
+
+        <div id="czProfileApplicationContent"></div>
+
+        <div class="cz-profile-actions">
+          <button class="cz-profile-secondary" id="czProfileRefresh" type="button">Refresh Status</button>
+          <button class="cz-profile-secondary" id="czProfileLogout" type="button">Sign out</button>
+        </div>
+
+        <div class="cz-profile-message" id="czProfileDataMessage"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <div class="cz-auth-overlay" id="czAuthOverlay" aria-hidden="true">
   <div class="cz-auth-modal" role="dialog" aria-modal="true" aria-labelledby="czAuthTitle">
@@ -38810,6 +39709,1177 @@ html{
   document.getElementById('czApplicationForm').addEventListener('change',saveFormState);
     async function restoreSession(){try{const pending=localStorage.getItem(PENDING_ROLE_KEY),{data:{session}}=await client.auth.getSession();if(session?.user?.email&&pending){currentRole=pending;selectedRole.textContent=currentRole;applicationRole.textContent=currentRole;overlay.classList.add('show');overlay.setAttribute('aria-hidden','false');document.documentElement.style.overflow='hidden';showApplication(session.user);if(window.location.search||window.location.hash)history.replaceState({},document.title,window.location.pathname)}}catch(err){console.error('SESSION RESTORE ERROR',err)}}
   restoreSession();
+})();
+</script>
+
+
+<script>
+/* =========================================================
+   CAREERS USER PROFILE + LIVE APPLICATION STATUS
+========================================================= */
+(function(){
+  "use strict";
+
+  const PROFILE_INTENT_KEY = "cz_career_profile_login_intent";
+
+  const SUPABASE_URL =
+    "https://yezfrkciwosyyookyogs.supabase.co";
+
+  const SUPABASE_ANON_KEY =
+    "sb_publishable_v97iTR8ILzJ_K0X1vmeYiA_SrZcsd57";
+
+  if(!window.supabase) return;
+
+  const profileClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+  const profileNavBtn =
+    document.getElementById("czProfileNavBtn");
+
+  const profileNavDot =
+    document.getElementById("czProfileNavDot");
+
+  const profileNavName =
+    document.getElementById("czProfileNavName");
+
+  const profileNavStatus =
+    document.getElementById("czProfileNavStatus");
+
+  const profileNavAvatar =
+    document.getElementById("czProfileNavAvatar");
+
+  const overlay =
+    document.getElementById("czProfileOverlay");
+
+  const closeBtn =
+    document.getElementById("czProfileClose");
+
+  const loginView =
+    document.getElementById("czProfileLoginView");
+
+  const otpView =
+    document.getElementById("czProfileOtpView");
+
+  const dataView =
+    document.getElementById("czProfileDataView");
+
+  const emailInput =
+    document.getElementById("czProfileEmail");
+
+  const sendOtpBtn =
+    document.getElementById("czProfileSendOtp");
+
+  const googleBtn =
+    document.getElementById("czProfileGoogleBtn");
+
+  const loginMessage =
+    document.getElementById("czProfileLoginMessage");
+
+  const otpEmail =
+    document.getElementById("czProfileOtpEmail");
+
+  const otpBoxes =
+    Array.from(
+      document.querySelectorAll(
+        "#czProfileOtpRow .cz-profile-otp-box"
+      )
+    );
+
+  const verifyOtpBtn =
+    document.getElementById("czProfileVerifyOtp");
+
+  const changeEmailBtn =
+    document.getElementById("czProfileChangeEmail");
+
+  const otpMessage =
+    document.getElementById("czProfileOtpMessage");
+
+  const nameEl =
+    document.getElementById("czProfileName");
+
+  const userEmailEl =
+    document.getElementById("czProfileUserEmail");
+
+  const avatarEl =
+    document.getElementById("czProfileAvatar");
+
+  const applicationContent =
+    document.getElementById("czProfileApplicationContent");
+
+  const refreshBtn =
+    document.getElementById("czProfileRefresh");
+
+  const logoutBtn =
+    document.getElementById("czProfileLogout");
+
+  const dataMessage =
+    document.getElementById("czProfileDataMessage");
+
+  let profileRealtimeChannel = null;
+
+  function setMessage(el,text){
+    if(!el) return;
+
+    el.textContent = text || "";
+    el.classList.toggle("show",!!text);
+  }
+
+  function setBusy(button,busy,label){
+    if(!button) return;
+
+    if(busy){
+      button.dataset.oldText =
+        button.textContent;
+
+      button.disabled = true;
+      button.textContent = label;
+    }else{
+      button.disabled = false;
+
+      if(button.dataset.oldText){
+        button.textContent =
+          button.dataset.oldText;
+
+        delete button.dataset.oldText;
+      }
+    }
+  }
+
+  function showOnly(view){
+    loginView.classList.remove("hide");
+    otpView.classList.remove("show");
+    dataView.classList.remove("show");
+
+    if(view === "login"){
+      loginView.classList.remove("hide");
+    }
+
+    if(view === "otp"){
+      loginView.classList.add("hide");
+      otpView.classList.add("show");
+    }
+
+    if(view === "data"){
+      loginView.classList.add("hide");
+      dataView.classList.add("show");
+    }
+  }
+
+  function openProfile(){
+    overlay.classList.add("show");
+    overlay.setAttribute(
+      "aria-hidden",
+      "false"
+    );
+
+    document.documentElement.style.overflow =
+      "hidden";
+  }
+
+  function closeProfile(){
+    overlay.classList.remove("show");
+    overlay.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    document.documentElement.style.overflow =
+      "";
+  }
+
+  function escapeHtml(value){
+    return String(value ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function formatDate(value){
+    if(!value) return "-";
+
+    try{
+      return new Intl.DateTimeFormat(
+        "en-IN",
+        {
+          dateStyle:"medium",
+          timeStyle:"short"
+        }
+      ).format(new Date(value));
+    }catch{
+      return String(value);
+    }
+  }
+
+  function statusInfo(application){
+    if(!application){
+      return {
+        key:"pending",
+        label:"Pending"
+      };
+    }
+
+    const raw =
+      String(
+        application.review_status ||
+        ""
+      )
+      .trim()
+      .toLowerCase();
+
+    if(
+      raw === "accepted" ||
+      raw === "shortlisted"
+    ){
+      return {
+        key:"shortlisted",
+        label:"Shortlisted"
+      };
+    }
+
+    if(raw === "rejected"){
+      return {
+        key:"rejected",
+        label:"Rejected"
+      };
+    }
+
+    return {
+      key:"pending",
+      label:"Pending"
+    };
+  }
+
+  function updateNavStatus(application,loggedIn,user=null){
+    if(!profileNavDot) return;
+
+    profileNavDot.className =
+      "cz-profile-nav-dot";
+
+    if(profileNavStatus){
+      profileNavStatus.className =
+        "cz-careers-profile-status";
+    }
+
+    if(!loggedIn){
+      if(profileNavName){
+        profileNavName.textContent =
+          "Profile";
+      }
+
+      if(profileNavStatus){
+        profileNavStatus.textContent =
+          "Sign in to view status";
+      }
+
+      if(profileNavAvatar){
+        profileNavAvatar.textContent =
+          "P";
+      }
+
+      return;
+    }
+
+    const displayName =
+      application?.full_name?.trim()
+      ||
+      user?.user_metadata?.full_name
+      ||
+      user?.user_metadata?.name
+      ||
+      user?.email?.split("@")[0]
+      ||
+      "Profile";
+
+    if(profileNavName){
+      profileNavName.textContent =
+        displayName;
+    }
+
+    if(profileNavAvatar){
+      profileNavAvatar.textContent =
+        displayName.trim().charAt(0).toUpperCase() || "U";
+    }
+
+    if(!application){
+      profileNavDot.classList.add(
+        "is-logged"
+      );
+
+      if(profileNavStatus){
+        profileNavStatus.textContent =
+          "No application";
+      }
+
+      return;
+    }
+
+    const info =
+      statusInfo(application);
+
+    profileNavDot.classList.add(
+      info.key === "shortlisted"
+        ? "is-shortlisted"
+        : info.key === "rejected"
+          ? "is-rejected"
+          : "is-pending"
+    );
+
+    if(profileNavStatus){
+      profileNavStatus.textContent =
+        info.label;
+
+      profileNavStatus.classList.add(
+        info.key
+      );
+    }
+  }
+
+  async function getCurrentUser(){
+    const {
+      data:{ user },
+      error
+    } =
+      await profileClient
+        .auth
+        .getUser();
+
+    if(error){
+      console.warn(
+        "PROFILE USER ERROR:",
+        error
+      );
+
+      return null;
+    }
+
+    return user || null;
+  }
+
+  async function getLatestApplication(user){
+    if(!user?.id) return [];
+
+    let {
+      data,
+      error
+    } =
+      await profileClient
+        .from("career_applications")
+        .select(
+          "id,user_id,full_name,email,phone,job_role,review_status,status,created_at,reviewed_at,rejection_reason"
+        )
+        .eq(
+          "user_id",
+          user.id
+        )
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
+
+    if(error){
+      console.error(
+        "PROFILE APPLICATION ERROR:",
+        error
+      );
+      throw error;
+    }
+
+    /*
+      If user_id has no rows, also try the authenticated email.
+      This helps older applications that were saved with email.
+    */
+    if((!data || !data.length) && user.email){
+      const fallback =
+        await profileClient
+          .from("career_applications")
+          .select(
+            "id,user_id,full_name,email,phone,job_role,review_status,status,created_at,reviewed_at,rejection_reason"
+          )
+          .eq(
+            "email",
+            String(user.email).trim().toLowerCase()
+          )
+          .order(
+            "created_at",
+            {
+              ascending:false
+            }
+          );
+
+      if(!fallback.error && fallback.data){
+        data = fallback.data;
+      }
+    }
+
+    return Array.isArray(data) ? data : [];
+  }
+
+  function renderApplication(user,applications){
+    const list =
+      Array.isArray(applications)
+        ? applications
+        : (applications ? [applications] : []);
+
+    const latest =
+      list[0] || null;
+
+    const displayName =
+      latest?.full_name?.trim()
+      ||
+      user?.user_metadata?.full_name
+      ||
+      user?.user_metadata?.name
+      ||
+      (user?.email
+        ? user.email.split("@")[0]
+        : "Applicant");
+
+    nameEl.textContent =
+      displayName;
+
+    userEmailEl.textContent =
+      user?.email || "";
+
+    avatarEl.textContent =
+      String(displayName)
+        .trim()
+        .charAt(0)
+        .toUpperCase()
+      || "U";
+
+    if(!list.length){
+      applicationContent.innerHTML = `
+        <div class="cz-profile-applications-heading">Applications</div>
+        <div class="cz-profile-no-application">
+          No application submitted.
+        </div>
+      `;
+
+      updateNavStatus(
+        null,
+        true,
+        user
+      );
+
+      return;
+    }
+
+    const applicationHtml =
+      list.map(
+        (application,index)=>{
+          const info =
+            statusInfo(application);
+
+          const rejectionNote =
+            info.key === "rejected" &&
+            application.rejection_reason
+              ? `
+                <div class="cz-profile-row">
+                  <span>Note</span>
+                  <strong>${escapeHtml(application.rejection_reason)}</strong>
+                </div>
+              `
+              : "";
+
+          return `
+            <div class="cz-profile-application-card">
+              <div class="cz-profile-application-index">
+                Application ${index + 1}
+              </div>
+
+              <div class="cz-profile-row">
+                <span>Role</span>
+                <strong>${escapeHtml(application.job_role || "Job Application")}</strong>
+              </div>
+
+              <div class="cz-profile-row">
+                <span>Status</span>
+                <strong>
+                  <span class="cz-profile-status ${info.key}">
+                    ${escapeHtml(info.label)}
+                  </span>
+                </strong>
+              </div>
+
+              <div class="cz-profile-row">
+                <span>Applied on</span>
+                <strong>${escapeHtml(formatDate(application.created_at))}</strong>
+              </div>
+
+              ${
+                application.reviewed_at
+                  ? `
+                    <div class="cz-profile-row">
+                      <span>Last updated</span>
+                      <strong>${escapeHtml(formatDate(application.reviewed_at))}</strong>
+                    </div>
+                  `
+                  : ""
+              }
+
+              ${rejectionNote}
+            </div>
+          `;
+        }
+      ).join("");
+
+    applicationContent.innerHTML = `
+      <div class="cz-profile-applications-heading">
+        Your applications
+      </div>
+      ${applicationHtml}
+    `;
+
+    updateNavStatus(
+      latest,
+      true,
+      user
+    );
+  }
+
+  function stopRealtime(){
+    if(profileRealtimeChannel){
+      profileClient.removeChannel(
+        profileRealtimeChannel
+      );
+
+      profileRealtimeChannel = null;
+    }
+  }
+
+  function startRealtime(user){
+    stopRealtime();
+
+    if(!user?.id) return;
+
+    profileRealtimeChannel =
+      profileClient
+        .channel(
+          "career-profile-" + user.id
+        )
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"career_applications",
+            filter:`user_id=eq.${user.id}`
+          },
+          async ()=>{
+            try{
+              const latest =
+                await getLatestApplication(
+                  user
+                );
+
+              renderApplication(
+                user,
+                latest
+              );
+            }catch(error){
+              console.error(
+                "PROFILE REALTIME REFRESH ERROR:",
+                error
+              );
+            }
+          }
+        )
+        .subscribe();
+  }
+
+  async function loadProfile(openAfterLoad=true){
+    setMessage(
+      dataMessage,
+      ""
+    );
+
+    const user =
+      await getCurrentUser();
+
+    if(!user){
+      stopRealtime();
+
+      updateNavStatus(
+        null,
+        false
+      );
+
+      showOnly("login");
+
+      if(openAfterLoad){
+        openProfile();
+
+        setTimeout(
+          ()=>emailInput.focus(),
+          80
+        );
+      }
+
+      return;
+    }
+
+    try{
+      const application =
+        await getLatestApplication(
+          user
+        );
+
+      renderApplication(
+        user,
+        application
+      );
+
+      startRealtime(
+        user
+      );
+
+      showOnly("data");
+
+      if(openAfterLoad){
+        openProfile();
+      }
+    }
+    catch(error){
+      showOnly("data");
+
+      nameEl.textContent =
+        user?.user_metadata?.full_name
+        ||
+        user?.user_metadata?.name
+        ||
+        user?.email?.split("@")[0]
+        ||
+        "Applicant";
+
+      userEmailEl.textContent =
+        user.email || "";
+
+      applicationContent.innerHTML = `
+        <div class="cz-profile-no-application">
+          We could not load your application status right now.
+        </div>
+      `;
+
+      setMessage(
+        dataMessage,
+        error?.message ||
+        "Could not load application status."
+      );
+
+      if(openAfterLoad){
+        openProfile();
+      }
+    }
+  }
+
+  async function sendOtp(){
+    const email =
+      emailInput.value
+        .trim()
+        .toLowerCase();
+
+    setMessage(
+      loginMessage,
+      ""
+    );
+
+    if(
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+        email
+      )
+    ){
+      setMessage(
+        loginMessage,
+        "Enter a valid email address."
+      );
+
+      return;
+    }
+
+    setBusy(
+      sendOtpBtn,
+      true,
+      "Sending..."
+    );
+
+    try{
+      localStorage.setItem(
+        PROFILE_INTENT_KEY,
+        "1"
+      );
+
+      const {
+        error
+      } =
+        await profileClient
+          .auth
+          .signInWithOtp({
+            email,
+            options:{
+              shouldCreateUser:true
+            }
+          });
+
+      if(error) throw error;
+
+      otpEmail.textContent =
+        email;
+
+      otpBoxes.forEach(
+        box=>box.value=""
+      );
+
+      showOnly("otp");
+
+      setTimeout(
+        ()=>otpBoxes[0]?.focus(),
+        80
+      );
+    }
+    catch(error){
+      console.error(
+        "PROFILE OTP SEND ERROR:",
+        error
+      );
+
+      setMessage(
+        loginMessage,
+        error?.message ||
+        "Could not send OTP."
+      );
+    }
+    finally{
+      setBusy(
+        sendOtpBtn,
+        false
+      );
+    }
+  }
+
+  async function verifyOtp(){
+    const email =
+      otpEmail.textContent
+        .trim()
+        .toLowerCase();
+
+    const token =
+      otpBoxes
+        .map(
+          box=>box.value
+        )
+        .join("");
+
+    setMessage(
+      otpMessage,
+      ""
+    );
+
+    if(token.length !== 6){
+      setMessage(
+        otpMessage,
+        "Enter the complete 6-digit OTP."
+      );
+
+      return;
+    }
+
+    setBusy(
+      verifyOtpBtn,
+      true,
+      "Verifying..."
+    );
+
+    try{
+      const {
+        data,
+        error
+      } =
+        await profileClient
+          .auth
+          .verifyOtp({
+            email,
+            token,
+            type:"email"
+          });
+
+      if(error) throw error;
+
+      if(!data?.user){
+        throw new Error(
+          "Authentication failed."
+        );
+      }
+
+      localStorage.removeItem(
+        PROFILE_INTENT_KEY
+      );
+
+      await loadProfile(
+        true
+      );
+    }
+    catch(error){
+      console.error(
+        "PROFILE OTP VERIFY ERROR:",
+        error
+      );
+
+      setMessage(
+        otpMessage,
+        error?.message ||
+        "Invalid or expired OTP."
+      );
+    }
+    finally{
+      setBusy(
+        verifyOtpBtn,
+        false
+      );
+    }
+  }
+
+  async function googleLogin(){
+    setMessage(
+      loginMessage,
+      ""
+    );
+
+    setBusy(
+      googleBtn,
+      true,
+      "Opening Google..."
+    );
+
+    localStorage.setItem(
+      PROFILE_INTENT_KEY,
+      "1"
+    );
+
+    try{
+      const {
+        error
+      } =
+        await profileClient
+          .auth
+          .signInWithOAuth({
+            provider:"google",
+            options:{
+              redirectTo:
+                window.location.origin +
+                window.location.pathname,
+              queryParams:{
+                prompt:"select_account"
+              }
+            }
+          });
+
+      if(error) throw error;
+    }
+    catch(error){
+      localStorage.removeItem(
+        PROFILE_INTENT_KEY
+      );
+
+      setMessage(
+        loginMessage,
+        error?.message ||
+        "Google sign in failed."
+      );
+
+      setBusy(
+        googleBtn,
+        false
+      );
+    }
+  }
+
+  profileNavBtn?.addEventListener(
+    "click",
+    async event=>{
+      event.preventDefault();
+      event.stopPropagation();
+
+      await loadProfile(
+        true
+      );
+    }
+  );
+
+  closeBtn?.addEventListener(
+    "click",
+    closeProfile
+  );
+
+  overlay?.addEventListener(
+    "click",
+    event=>{
+      if(event.target === overlay){
+        closeProfile();
+      }
+    }
+  );
+
+  document.addEventListener(
+    "keydown",
+    event=>{
+      if(
+        event.key === "Escape" &&
+        overlay.classList.contains("show")
+      ){
+        closeProfile();
+      }
+    }
+  );
+
+  sendOtpBtn?.addEventListener(
+    "click",
+    sendOtp
+  );
+
+  emailInput?.addEventListener(
+    "keydown",
+    event=>{
+      if(event.key === "Enter"){
+        sendOtp();
+      }
+    }
+  );
+
+  googleBtn?.addEventListener(
+    "click",
+    googleLogin
+  );
+
+  otpBoxes.forEach(
+    (box,index)=>{
+      box.addEventListener(
+        "input",
+        ()=>{
+          box.value =
+            box.value
+              .replace(/\D/g,"")
+              .slice(0,1);
+
+          if(
+            box.value &&
+            index < otpBoxes.length - 1
+          ){
+            otpBoxes[
+              index + 1
+            ].focus();
+          }
+        }
+      );
+
+      box.addEventListener(
+        "keydown",
+        event=>{
+          if(
+            event.key === "Backspace" &&
+            !box.value &&
+            index > 0
+          ){
+            otpBoxes[
+              index - 1
+            ].focus();
+          }
+
+          if(event.key === "Enter"){
+            verifyOtp();
+          }
+        }
+      );
+
+      box.addEventListener(
+        "paste",
+        event=>{
+          const digits =
+            event.clipboardData
+              .getData("text")
+              .replace(/\D/g,"")
+              .slice(0,6);
+
+          if(!digits) return;
+
+          event.preventDefault();
+
+          digits
+            .split("")
+            .forEach(
+              (digit,i)=>{
+                if(otpBoxes[i]){
+                  otpBoxes[i].value =
+                    digit;
+                }
+              }
+            );
+
+          otpBoxes[
+            Math.min(
+              digits.length,
+              6
+            ) - 1
+          ]?.focus();
+        }
+      );
+    }
+  );
+
+  verifyOtpBtn?.addEventListener(
+    "click",
+    verifyOtp
+  );
+
+  changeEmailBtn?.addEventListener(
+    "click",
+    ()=>{
+      setMessage(
+        otpMessage,
+        ""
+      );
+
+      showOnly(
+        "login"
+      );
+
+      setTimeout(
+        ()=>emailInput.focus(),
+        60
+      );
+    }
+  );
+
+  refreshBtn?.addEventListener(
+    "click",
+    async ()=>{
+      setBusy(
+        refreshBtn,
+        true,
+        "Refreshing..."
+      );
+
+      try{
+        await loadProfile(
+          false
+        );
+      }
+      finally{
+        setBusy(
+          refreshBtn,
+          false
+        );
+      }
+    }
+  );
+
+  logoutBtn?.addEventListener(
+    "click",
+    async ()=>{
+      stopRealtime();
+
+      await profileClient
+        .auth
+        .signOut();
+
+      localStorage.removeItem(
+        PROFILE_INTENT_KEY
+      );
+
+      updateNavStatus(
+        null,
+        false
+      );
+
+      emailInput.value = "";
+
+      otpBoxes.forEach(
+        box=>box.value=""
+      );
+
+      showOnly(
+        "login"
+      );
+    }
+  );
+
+  /*
+    Update the little Careers-profile status dot on page load.
+    If this page is returning from Google profile login,
+    automatically reopen the profile instead of the job form.
+  */
+  (async function restoreProfile(){
+    const intent =
+      localStorage.getItem(
+        PROFILE_INTENT_KEY
+      ) === "1";
+
+    const user =
+      await getCurrentUser();
+
+    if(user){
+      try{
+        const application =
+          await getLatestApplication(
+            user
+          );
+
+        updateNavStatus(
+          Array.isArray(application) ? (application[0] || null) : application,
+          true,
+          user
+        );
+      }
+      catch{
+        updateNavStatus(
+          null,
+          true,
+          user
+        );
+      }
+    }else{
+      updateNavStatus(
+        null,
+        false
+      );
+    }
+
+    if(intent && user){
+      localStorage.removeItem(
+        PROFILE_INTENT_KEY
+      );
+
+      /*
+        Prevent the normal application OAuth restore logic
+        from forcing the Apply form when Profile was requested.
+      */
+      localStorage.removeItem(
+        "cezonal_pending_job_role"
+      );
+
+      if(
+        window.location.search ||
+        window.location.hash
+      ){
+        history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+      }
+
+      await loadProfile(
+        true
+      );
+    }
+  })();
+
 })();
 </script>
 
