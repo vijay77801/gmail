@@ -193,6 +193,21 @@ tr:last-child td{border-bottom:0}
 .confirm-reject{
   width:100%;height:46px;margin-top:10px;border:0;border-radius:9px;background:#b42318;color:#fff;font-weight:800
 }
+.accept-btn:disabled,.reject-btn:disabled,.confirm-reject:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+.current-decision{
+  margin-top:14px;
+  padding:12px 13px;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  background:#fafafa;
+  font-size:11.5px;
+  line-height:1.55;
+  color:#5b616b;
+}
+.current-decision strong{color:#111827}
 
 @media(max-width:850px){
   .stats{grid-template-columns:1fr 1fr}
@@ -208,6 +223,118 @@ tr:last-child td{border-bottom:0}
   .drawer{padding:20px 16px}
   .action-row{grid-template-columns:1fr}
 }
+
+/* =========================================================
+   FULL APPLICATION DETAILS + RESUME
+========================================================= */
+.resume-btn,
+.portfolio-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:38px;
+  padding:0 12px;
+  border-radius:9px;
+  text-decoration:none;
+  font-size:11px;
+  font-weight:800;
+}
+
+.resume-btn{
+  border:0;
+  background:#111827;
+  color:#fff;
+}
+
+.resume-btn:hover{background:#252b36}
+
+.portfolio-btn{
+  border:1px solid #dfe3e8;
+  background:#fff;
+  color:#111827;
+}
+
+.portfolio-btn:hover{background:#f5f6f7}
+
+.resume-meta{
+  margin-top:8px;
+  color:#8b919a;
+  font-size:10px;
+  line-height:1.5;
+}
+
+.detail-section-title{
+  grid-column:1/-1;
+  margin-top:5px;
+  padding-top:10px;
+  color:#111827;
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  border-top:1px solid #eceef1;
+}
+
+.detail-section-title:first-child{
+  border-top:0;
+  padding-top:0;
+}
+
+.long-text{
+  white-space:pre-wrap;
+  line-height:1.7!important;
+}
+
+.resume-status{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  font-size:10px;
+  font-weight:800;
+}
+
+.resume-status::before{
+  content:"";
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#18794e;
+}
+
+.no-resume{
+  color:#9298a1;
+  font-size:11px;
+}
+
+.file-size{
+  color:#7f8690;
+  font-size:10px;
+}
+
+.live-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-left:10px;
+  padding:6px 9px;
+  border-radius:999px;
+  background:#eff8f3;
+  color:#18794e;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.4px;
+  text-transform:uppercase;
+}
+
+.live-pill::before{
+  content:"";
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#18794e;
+}
+
 </style>
 </head>
 
@@ -257,7 +384,7 @@ tr:last-child td{border-bottom:0}
 <main id="adminPanel" class="admin">
   <div class="page-head">
     <div>
-      <h2>Applications</h2>
+      <h2>Applications <span class="live-pill">Live</span></h2>
       <p>Review candidate applications and send acceptance or rejection emails.</p>
     </div>
 
@@ -304,6 +431,7 @@ tr:last-child td{border-bottom:0}
             <th>Phone</th>
             <th>Submitted</th>
             <th>Email</th>
+            <th>Resume</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -330,7 +458,9 @@ tr:last-child td{border-bottom:0}
 
     <div class="action-area">
       <h4>Application decision</h4>
-      <p>Accepting or rejecting updates Supabase and automatically emails the applicant.</p>
+      <p>Shortlisting or rejecting updates Supabase and automatically emails the applicant.</p>
+
+      <div id="currentDecision" class="current-decision"></div>
 
       <div class="action-row">
         <button id="acceptBtn" class="accept-btn" type="button">
@@ -398,6 +528,7 @@ const rejectBox = document.getElementById("rejectBox");
 const rejectReason = document.getElementById("rejectReason");
 const confirmRejectBtn = document.getElementById("confirmRejectBtn");
 const decisionMessage = document.getElementById("decisionMessage");
+const currentDecision = document.getElementById("currentDecision");
 
 function showMessage(element, text, type="ok"){
   element.textContent = text;
@@ -427,6 +558,96 @@ function formatDate(value){
       timeStyle:"short"
     }
   ).format(new Date(value));
+}
+
+
+function formatFileSize(bytes){
+  const n = Number(bytes || 0);
+
+  if(!n) return "";
+
+  if(n < 1024){
+    return `${n} B`;
+  }
+
+  if(n < 1024 * 1024){
+    return `${(n / 1024).toFixed(1)} KB`;
+  }
+
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function hasResume(app){
+  return !!(
+    app?.resume_path &&
+    (
+      app?.resume_bucket ||
+      "career-resumes"
+    )
+  );
+}
+
+async function openResume(applicationId){
+  const app =
+    applications.find(
+      item =>
+        Number(item.id) ===
+        Number(applicationId)
+    );
+
+  if(!app){
+    return;
+  }
+
+  if(!app.resume_path){
+    alert("No resume was uploaded for this application.");
+    return;
+  }
+
+  const bucket =
+    app.resume_bucket ||
+    "career-resumes";
+
+  try{
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .storage
+        .from(bucket)
+        .createSignedUrl(
+          app.resume_path,
+          60 * 10
+        );
+
+    if(error){
+      throw error;
+    }
+
+    if(!data?.signedUrl){
+      throw new Error(
+        "Could not create resume link."
+      );
+    }
+
+    window.open(
+      data.signedUrl,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+  catch(error){
+    console.error(
+      "RESUME OPEN ERROR:",
+      error
+    );
+
+    alert(
+      error?.message ||
+      "Could not open resume."
+    );
+  }
 }
 
 function normalizedStatus(app){
@@ -591,18 +812,86 @@ async function verifyAdminOtp(){
   }
 }
 
+
+let adminRealtimeChannel = null;
+let adminRefreshTimer = null;
+
+function startAdminLiveUpdates(){
+  stopAdminLiveUpdates();
+
+  adminRealtimeChannel =
+    supabaseClient
+      .channel(
+        "career-admin-applications-" +
+        Date.now()
+      )
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"career_applications"
+        },
+        async ()=>{
+          await loadApplications();
+        }
+      )
+      .subscribe(
+        status=>{
+          console.log(
+            "ADMIN REALTIME:",
+            status
+          );
+        }
+      );
+
+  /*
+    Reliable fallback if Realtime publication is not enabled.
+  */
+  adminRefreshTimer =
+    setInterval(
+      ()=>{
+        if(
+          adminPanel.classList.contains("show")
+        ){
+          loadApplications();
+        }
+      },
+      10000
+    );
+}
+
+function stopAdminLiveUpdates(){
+  if(adminRealtimeChannel){
+    supabaseClient.removeChannel(
+      adminRealtimeChannel
+    );
+
+    adminRealtimeChannel = null;
+  }
+
+  if(adminRefreshTimer){
+    clearInterval(
+      adminRefreshTimer
+    );
+
+    adminRefreshTimer = null;
+  }
+}
+
 async function openDashboard(){
   loginShell.classList.add("hidden");
   adminPanel.classList.add("show");
   logoutBtn.classList.remove("hidden");
 
   await loadApplications();
+  startAdminLiveUpdates();
 }
 
 async function loadApplications(){
   applicationsBody.innerHTML = `
     <tr>
-      <td colspan="7" style="text-align:center;color:#8b919a;padding:36px">
+      <td colspan="8" style="text-align:center;color:#8b919a;padding:36px">
         Loading applications...
       </td>
     </tr>
@@ -624,7 +913,7 @@ async function loadApplications(){
 
     applicationsBody.innerHTML = `
       <tr>
-        <td colspan="7" style="text-align:center;color:#b42318;padding:36px">
+        <td colspan="8" style="text-align:center;color:#b42318;padding:36px">
           ${esc(error.message)}
         </td>
       </tr>
@@ -713,8 +1002,28 @@ function renderApplications(){
           <td>${esc(app.email_status || "-")}</td>
 
           <td>
+            ${
+              hasResume(app)
+                ? `
+                  <button
+                    class="view-btn"
+                    type="button"
+                    onclick="openResume(${Number(app.id)})"
+                  >
+                    View Resume
+                  </button>
+                `
+                : `<span class="subtext">No resume</span>`
+            }
+          </td>
+
+          <td>
             <span class="status ${status}">
-              ${esc(status)}
+              ${
+                status === "accepted"
+                  ? "shortlisted"
+                  : esc(status)
+              }
             </span>
           </td>
 
@@ -731,6 +1040,8 @@ function renderApplications(){
       `;
     }).join("");
 }
+
+window.openResume = openResume;
 
 window.openApplication = function(id){
   selectedApplication =
@@ -752,10 +1063,58 @@ window.openApplication = function(id){
 
   const portfolio =
     selectedApplication.portfolio_url
-      ? `<a class="link" href="${esc(selectedApplication.portfolio_url)}" target="_blank" rel="noopener noreferrer">${esc(selectedApplication.portfolio_url)}</a>`
-      : "-";
+      ? `
+        <a
+          class="portfolio-btn"
+          href="${esc(selectedApplication.portfolio_url)}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open Portfolio
+        </a>
+        <div class="resume-meta">
+          ${esc(selectedApplication.portfolio_url)}
+        </div>
+      `
+      : `<span class="no-resume">No portfolio added</span>`;
+
+  const resume =
+    hasResume(selectedApplication)
+      ? `
+        <button
+          class="resume-btn"
+          type="button"
+          onclick="openResume(${Number(selectedApplication.id)})"
+        >
+          View Resume
+        </button>
+
+        <div class="resume-meta">
+          ${esc(selectedApplication.resume_file_name || "Resume")}
+          ${
+            selectedApplication.resume_file_size
+              ? ` · ${esc(formatFileSize(selectedApplication.resume_file_size))}`
+              : ""
+          }
+          ${
+            selectedApplication.resume_file_type
+              ? ` · ${esc(selectedApplication.resume_file_type)}`
+              : ""
+          }
+        </div>
+      `
+      : `<span class="no-resume">No resume uploaded</span>`;
 
   drawerDetails.innerHTML = `
+    <div class="detail-section-title">
+      Applicant
+    </div>
+
+    <div class="detail">
+      <small>Full Name</small>
+      <div>${esc(selectedApplication.full_name || "-")}</div>
+    </div>
+
     <div class="detail">
       <small>Email</small>
       <div>${esc(selectedApplication.email || "-")}</div>
@@ -767,13 +1126,28 @@ window.openApplication = function(id){
     </div>
 
     <div class="detail">
+      <small>Job Role</small>
+      <div>${esc(selectedApplication.job_role || "-")}</div>
+    </div>
+
+    <div class="detail">
       <small>Location</small>
       <div>${esc(selectedApplication.location || "-")}</div>
     </div>
 
     <div class="detail">
+      <small>Authentication</small>
+      <div>${esc(selectedApplication.auth_provider || "-")}</div>
+    </div>
+
+
+    <div class="detail-section-title">
+      Education & Experience
+    </div>
+
+    <div class="detail">
       <small>Experience</small>
-      <div>${esc(selectedApplication.experience || "-")}</div>
+      <div>${esc(selectedApplication.experience ?? "-")}</div>
     </div>
 
     <div class="detail">
@@ -781,9 +1155,9 @@ window.openApplication = function(id){
       <div>${esc(selectedApplication.qualification || "-")}</div>
     </div>
 
-    <div class="detail">
-      <small>Authentication</small>
-      <div>${esc(selectedApplication.auth_provider || "-")}</div>
+
+    <div class="detail-section-title">
+      Portfolio & Resume
     </div>
 
     <div class="detail full">
@@ -792,8 +1166,18 @@ window.openApplication = function(id){
     </div>
 
     <div class="detail full">
-      <small>Applicant Message</small>
-      <div>${esc(selectedApplication.cover_message || "-")}</div>
+      <small>Resume</small>
+      <div>${resume}</div>
+    </div>
+
+
+    <div class="detail-section-title">
+      Application Information
+    </div>
+
+    <div class="detail full">
+      <small>All Details Entered by Applicant</small>
+      <div class="long-text">${esc(selectedApplication.cover_message || "-")}</div>
     </div>
 
     <div class="detail">
@@ -802,8 +1186,24 @@ window.openApplication = function(id){
     </div>
 
     <div class="detail">
+      <small>Submission Email</small>
+      <div>${esc(selectedApplication.email_status || "-")}</div>
+    </div>
+
+    <div class="detail">
       <small>Current Status</small>
-      <div>${esc(normalizedStatus(selectedApplication))}</div>
+      <div>
+        ${
+          normalizedStatus(selectedApplication) === "accepted"
+            ? "Shortlisted"
+            : esc(normalizedStatus(selectedApplication))
+        }
+      </div>
+    </div>
+
+    <div class="detail">
+      <small>Decision Email</small>
+      <div>${esc(selectedApplication.decision_email_status || "-")}</div>
     </div>
 
     ${
@@ -822,7 +1222,7 @@ window.openApplication = function(id){
         ? `
           <div class="detail full">
             <small>Rejection Note</small>
-            <div>${esc(selectedApplication.rejection_reason)}</div>
+            <div class="long-text">${esc(selectedApplication.rejection_reason)}</div>
           </div>
         `
         : ""
@@ -832,11 +1232,34 @@ window.openApplication = function(id){
   const status =
     normalizedStatus(selectedApplication);
 
-  acceptBtn.disabled =
-    status === "accepted";
+  /*
+    IMPORTANT:
+    Admin can change a decision later.
+    Example:
+      shortlisted -> rejected
+      rejected -> shortlisted
+    Therefore neither action is permanently disabled.
+  */
+  acceptBtn.disabled = false;
+  rejectBtn.disabled = false;
+  confirmRejectBtn.disabled = false;
 
-  rejectBtn.disabled =
-    status === "rejected";
+  acceptBtn.textContent =
+    status === "accepted"
+      ? "Shortlisted"
+      : "Shortlist Application";
+
+  rejectBtn.textContent =
+    status === "rejected"
+      ? "Rejected"
+      : "Reject Application";
+
+  currentDecision.innerHTML =
+    status === "accepted"
+      ? 'Current decision: <strong>Shortlisted</strong>. You can still change it to Rejected.'
+      : status === "rejected"
+        ? 'Current decision: <strong>Rejected</strong>. You can still change it back to Shortlisted.'
+        : 'Current decision: <strong>Pending</strong>. Choose Shortlist or Reject.';
 
   drawerOverlay.classList.add("show");
   document.documentElement.style.overflow = "hidden";
@@ -853,12 +1276,29 @@ async function performDecision(action, reason=""){
 
   clearMessage(decisionMessage);
 
+  const applicationId = selectedApplication.id;
+
+  if(action !== "accept" && action !== "reject"){
+    showMessage(
+      decisionMessage,
+      "Invalid application action.",
+      "err"
+    );
+    return;
+  }
+
+  /*
+    Disable only while the request is running.
+    They are re-enabled after EVERY request, so a shortlisted
+    application can later be rejected and vice-versa.
+  */
   acceptBtn.disabled = true;
   rejectBtn.disabled = true;
   confirmRejectBtn.disabled = true;
 
-  const originalAcceptText = acceptBtn.textContent;
-  const originalRejectText = confirmRejectBtn.textContent;
+  const oldAcceptText = acceptBtn.textContent;
+  const oldRejectText = rejectBtn.textContent;
+  const oldConfirmText = confirmRejectBtn.textContent;
 
   if(action === "accept"){
     acceptBtn.textContent = "Shortlisting...";
@@ -867,10 +1307,6 @@ async function performDecision(action, reason=""){
   }
 
   try{
-    /*
-      Edge Function checks the currently authenticated user
-      is really an admin before changing any application.
-    */
     const {
       data,
       error
@@ -879,24 +1315,57 @@ async function performDecision(action, reason=""){
         ADMIN_ACTION_FUNCTION,
         {
           body:{
-            applicationId:
-              selectedApplication.id,
-
+            applicationId,
             action,
-
             rejectionReason:
-              reason || null
+              action === "reject"
+                ? (reason || null)
+                : null
           }
         }
       );
 
-    if(error) throw error;
+    if(error){
+      console.error(
+        "EDGE FUNCTION INVOKE ERROR:",
+        error
+      );
+
+      throw new Error(
+        error?.message ||
+        "Admin action Edge Function failed."
+      );
+    }
 
     if(!data?.success){
+      console.error(
+        "ADMIN ACTION RESPONSE:",
+        data
+      );
+
       throw new Error(
         data?.error ||
         "Unable to update application."
       );
+    }
+
+    /*
+      Update local selected row immediately.
+      This avoids stale status after Shortlist -> Reject.
+    */
+    if(data.application){
+      selectedApplication = data.application;
+
+      const index =
+        applications.findIndex(
+          app =>
+            Number(app.id) ===
+            Number(applicationId)
+        );
+
+      if(index !== -1){
+        applications[index] = data.application;
+      }
     }
 
     showMessage(
@@ -906,23 +1375,56 @@ async function performDecision(action, reason=""){
         : "Application rejected and rejection email sent."
     );
 
+    rejectBox.classList.remove("show");
+    rejectReason.value = "";
+
+    /*
+      Reload from Supabase so stats/table always match DB.
+    */
     await loadApplications();
 
-    selectedApplication =
+    const refreshed =
       applications.find(
         app =>
           Number(app.id) ===
-          Number(data.application?.id)
-      )
-      ||
-      selectedApplication;
+          Number(applicationId)
+      );
 
-    setTimeout(()=>{
-      closeDrawer();
-    },900);
+    if(refreshed){
+      selectedApplication = refreshed;
+    }
+
+    /*
+      Keep drawer open and refresh it instead of auto-closing.
+      This makes it possible to immediately change
+      Shortlisted -> Rejected or Rejected -> Shortlisted.
+    */
+    const newStatus =
+      normalizedStatus(selectedApplication);
+
+    currentDecision.innerHTML =
+      newStatus === "accepted"
+        ? 'Current decision: <strong>Shortlisted</strong>. You can still change it to Rejected.'
+        : newStatus === "rejected"
+          ? 'Current decision: <strong>Rejected</strong>. You can still change it back to Shortlisted.'
+          : 'Current decision: <strong>Pending</strong>. Choose Shortlist or Reject.';
+
+    acceptBtn.textContent =
+      newStatus === "accepted"
+        ? "Shortlisted"
+        : "Shortlist Application";
+
+    rejectBtn.textContent =
+      newStatus === "rejected"
+        ? "Rejected"
+        : "Reject Application";
+
   }
   catch(error){
-    console.error("ADMIN ACTION ERROR:", error);
+    console.error(
+      "ADMIN ACTION ERROR:",
+      error
+    );
 
     showMessage(
       decisionMessage,
@@ -930,16 +1432,25 @@ async function performDecision(action, reason=""){
       "Unable to process this application.",
       "err"
     );
-
-    acceptBtn.disabled = false;
-    rejectBtn.disabled = false;
   }
   finally{
-    acceptBtn.textContent = originalAcceptText;
-    confirmRejectBtn.textContent = originalRejectText;
+    /*
+      ALWAYS re-enable both actions.
+    */
+    acceptBtn.disabled = false;
+    rejectBtn.disabled = false;
     confirmRejectBtn.disabled = false;
+
+    if(acceptBtn.textContent === "Shortlisting..."){
+      acceptBtn.textContent = oldAcceptText;
+    }
+
+    if(confirmRejectBtn.textContent === "Rejecting..."){
+      confirmRejectBtn.textContent = oldConfirmText;
+    }
   }
 }
+
 
 sendOtpBtn.addEventListener("click", sendAdminOtp);
 verifyOtpBtn.addEventListener("click", verifyAdminOtp);
@@ -996,6 +1507,8 @@ confirmRejectBtn.addEventListener("click",()=>{
 });
 
 logoutBtn.addEventListener("click",async()=>{
+  stopAdminLiveUpdates();
+
   await supabaseClient.auth.signOut();
 
   adminPanel.classList.remove("show");
